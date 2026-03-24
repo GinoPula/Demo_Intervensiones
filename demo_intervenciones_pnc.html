@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PNC Maquinarias — Intervenciones</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f1f5f9;
+    --white: #ffffff;
+    --surface: #f8fafc;
+    --border: #e2e8f0;
+    --accent: #1565c0;
+    --accent2: #1976d2;
+    --orange: #e65100;
+    --red: #c62828;
+    --success: #2e7d32;
+    --success-bg: #e8f5e9;
+    --warn: #e65100;
+    --warn-bg: #fff3e0;
+    --danger: #c62828;
+    --danger-bg: #ffebee;
+    --info: #1565c0;
+    --info-bg: #e3f2fd;
+    --muted: #64748b;
+    --text: #1e293b;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --sidebar: 200px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar);
+    background: #0f172a;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  .sidebar-brand {
+    padding: 14px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .brand-chip {
+    background: var(--accent2);
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-bottom: 5px;
+    letter-spacing: .04em;
+  }
+
+  .brand-name {
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .brand-sub { color: #475569; font-size: 10px; }
+
+  .nav-section {
+    padding: 12px 10px 4px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #334155;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+    color: #64748b;
+    text-decoration: none;
+    border-radius: 6px;
+    margin: 1px 6px;
+    transition: all .15s;
+    cursor: pointer;
+  }
+
+  .nav-link:hover { background: rgba(255,255,255,.06); color: white; }
+  .nav-link.active { background: rgba(21,101,192,.2); color: #90caf9; }
+  .nav-link svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--accent);
+    color: white;
+    padding: 0 20px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-left h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .topbar-left p { font-size: 11px; opacity: .8; margin-top: 1px; }
+
+  .breadcrumb {
+    font-size: 11px;
+    opacity: .7;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 7px 18px;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity .15s;
+  }
+
+  .btn:hover { opacity: .88; }
+  .btn:active { transform: scale(.98); }
+  .btn-save { background: var(--orange); color: white; }
+  .btn-back { background: var(--red); color: white; }
+
+  /* ── FORM BODY ── */
+  .form-body { padding: 16px 20px; }
+
+  .form-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+
+  .section-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+  }
+
+  .section-body { padding: 14px 16px; }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    gap: 12px;
+  }
+
+  .grid4 {
+    display: grid;
+    grid-template-columns: auto minmax(0,1fr) auto minmax(0,1fr);
+    gap: 8px;
+    align-items: center;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 4px; }
+
+  .field label {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .req { color: var(--danger); font-size: 13px; }
+
+  .field input,
+  .field select,
+  .field textarea {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: white;
+    outline: none;
+    transition: border-color .2s;
+    width: 100%;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus { border-color: var(--accent2); }
+
+  .field input[readonly] {
+    background: var(--surface);
+    color: var(--muted);
+    cursor: default;
+  }
+
+  .field textarea { resize: vertical; min-height: 70px; }
+
+  .coord-label {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 20px;
+  }
+
+  .badge-new { background: var(--success-bg); color: var(--success); }
+  .badge-mod { background: var(--info-bg); color: var(--info); }
+
+  /* ── FEN GROUP ── */
+  .fen-group {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .chk-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .chk-row input[type=checkbox] {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    accent-color: var(--accent2);
+    flex-shrink: 0;
+    padding: 0;
+  }
+
+  .fen-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2px 0;
+  }
+
+  .cls-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    font-weight: 600;
+  }
+
+  /* ── ESTADO BOX (cambio de estado) ── */
+  .estado-comment-box {
+    display: none;
+    margin-top: 8px;
+    background: var(--warn-bg);
+    border: 1px solid #ffb74d;
+    border-radius: var(--radius);
+    padding: 10px 12px;
+  }
+
+  .estado-comment-box.desestimado {
+    background: var(--danger-bg);
+    border-color: #ef9a9a;
+  }
+
+  .comment-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--warn);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .comment-label.danger { color: var(--danger); }
+
+  .char-count {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    margin-top: 3px;
+  }
+
+  /* ── ESTADO BADGE ── */
+  .estado-info {
+    display: none;
+    font-size: 11px;
+    margin-top: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: var(--info-bg);
+    color: var(--info);
+  }
+
+  /* ── FOOTER LEGEND ── */
+  .form-legend {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+  }
+
+  .legend-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 8px;
+  }
+
+  .legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-chip">PNC</div>
+    <div class="brand-name">PNC Maquinarias</div>
+    <div class="brand-sub">Ministerio de Vivienda</div>
+  </div>
+
+  <div class="nav-section">Principal</div>
+  <a class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Inicio
+  </a>
+
+  <div class="nav-section">PNC Maquinarias</div>
+  <a class="nav-link active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    1. Intervenciones
+  </a>
+  <a class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+    2. Asignación Activos
+  </a>
+  <a class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    3. Avances
+  </a>
+  <a class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    4. Asig. Operadores
+  </a>
+  <a class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    5. Convenios
+  </a>
+  <a class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><bar-chart/><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    6. Reportes PNC
+  </a>
+  <a class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+    Ubic. Maquinaria
+  </a>
+  <a class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Parte Diario
+  </a>
+  <a class="nav-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    Inf. Cierre y Actas
+  </a>
+
+  <!-- Usuario -->
+  <div style="margin-top:auto;padding:10px 12px;border-top:1px solid rgba(255,255,255,.07)">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;background:var(--accent2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;flex-shrink:0">LC</div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:white">Luis F. Cangana</div>
+        <div style="font-size:10px;color:#475569">Coordinador UBO</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>INTERVENCIONES (PNC)</h1>
+      <p>UBO: <span style="color:#ffb300;font-weight:600">AMAZONAS</span> — Intervención <span style="color:#ffb300;font-weight:600">00001</span> — Formulario para realizar mantenimiento a la intervención.</p>
+    </div>
+    <div class="breadcrumb">
+      Inicio <span>›</span> Intervención <span>›</span> Formulario
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <button class="btn btn-save" onclick="guardar()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Grabar
+    </button>
+    <button class="btn btn-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Regresar
+    </button>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-body">
+
+    <!-- SECCIÓN 1: Datos principales -->
+    <div class="form-section">
+      <div class="section-header">Datos de la Intervención</div>
+      <div class="section-body">
+        <div class="grid2">
+
+          <div class="field">
+            <label>Número Intervención</label>
+            <input type="text" value="00001" readonly>
+          </div>
+          <div class="field">
+            <label>UBO</label>
+            <select>
+              <option>AMAZONAS</option><option>LIMA NORTE</option><option>PIURA</option>
+              <option>CUSCO</option><option>AREQUIPA</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Tipo Intervención <span class="req">*</span></label>
+            <select>
+              <option>PREVENCIÓN</option><option>REDUCCIÓN</option><option>EMERGENCIA</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>
+              Marco Legal : Convenio <span class="req">*</span>
+              <span class="badge badge-mod">modificado</span>
+            </label>
+            <select>
+              <option value="">(Seleccione un convenio)</option>
+              <option selected>ADENDA N° — CONVENIO N° 46-2023-VIVIENDA/VMVU/PNC</option>
+              <option>CONVENIO N° 47-2023-VIVIENDA/VMVU/PNC</option>
+              <option>CONVENIO N° 50-2024-VIVIENDA/VMVU/PNC</option>
+              <option>CONVENIO N° 52-2024-VIVIENDA/VMVU/PNC</option>
+              <option>CONVENIO N° 55-2025-VIVIENDA/VMVU/PNC</option>
+              <option>ADENDA N° 01 — CONVENIO N° 46-2023</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Estado de Convenio</label>
+            <select><option>VIGENTE</option><option>VENCIDO</option><option>RESCINDIDO</option></select>
+          </div>
+          <div class="field"></div>
+
+          <div class="field">
+            <label>Departamento <span class="req">*</span></label>
+            <select><option>AMAZONAS</option><option>LIMA</option><option>PIURA</option><option>CUSCO</option></select>
+          </div>
+          <div class="field">
+            <label>Provincia <span class="req">*</span></label>
+            <select><option>UTCUBAMBA</option><option>BAGUA</option></select>
+          </div>
+
+          <div class="field">
+            <label>Distrito <span class="req">*</span></label>
+            <select><option>BAGUA GRANDE</option><option>BAGUA</option></select>
+          </div>
+          <div class="field">
+            <label>Sector</label>
+            <input type="text" value="C.P. GONCHA">
+          </div>
+
+          <div class="field">
+            <label>Ficha Técnica <span class="req">*</span></label>
+            <input type="text" value="N°012-2026-LDP-AMZ">
+          </div>
+          <div class="field">
+            <label>Link</label>
+            <input type="text" placeholder="URL del documento...">
+          </div>
+
+          <div class="field">
+            <label>Supervisor</label>
+            <input type="text" placeholder="Nombre del supervisor">
+          </div>
+          <div class="field">
+            <label>Actividad <span class="req">*</span>
+              <span class="badge badge-new">nuevas opciones</span>
+            </label>
+            <select>
+              <option value="">(Seleccione)</option>
+              <optgroup label="Actividades existentes">
+                <option selected>LD-P</option>
+                <option>LD-R</option>
+                <option>DL-P</option>
+              </optgroup>
+              <optgroup label="Nuevas clasificaciones">
+                <option value="PLIA">Es PLIA</option>
+                <option value="PPCC_ANA">Es PPCC ANA</option>
+                <option value="ENTIDAD">Es Entidad</option>
+              </optgroup>
+            </select>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: Montos y metas -->
+    <div class="form-section">
+      <div class="section-header">Montos y Metas</div>
+      <div class="section-body">
+        <div class="grid2">
+
+          <div class="field">
+            <label>Monto Contratado (FTI)</label>
+            <input type="number" value="67000">
+          </div>
+          <div class="field">
+            <label>Monto Ejecutado (Informe de Cierre)</label>
+            <input type="number">
+          </div>
+
+          <div class="field">
+            <label>Meta (KM)</label>
+            <input type="number" value="0.5">
+          </div>
+          <div class="field">
+            <label>Meta (M3)</label>
+            <input type="number" value="11000">
+          </div>
+
+          <div class="field">
+            <label>Monto Combustible Aportes</label>
+            <input type="number">
+          </div>
+          <div class="field">
+            <label>Monto Combustible MVCS</label>
+            <input type="number">
+          </div>
+
+          <div class="field">
+            <label>Monto Mantenimiento Aportes</label>
+            <input type="number">
+          </div>
+          <div class="field">
+            <label>Monto Mantenimiento MVCS</label>
+            <input type="number">
+          </div>
+
+          <div class="field">
+            <label>Monto Personal Aportes</label>
+            <input type="number">
+          </div>
+          <div class="field">
+            <label>Monto Personal MVCS</label>
+            <input type="number">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 3: Estado e indicadores -->
+    <div class="form-section">
+      <div class="section-header">Estado e Indicadores</div>
+      <div class="section-body">
+        <div class="grid2">
+
+          <div class="field">
+            <label>Población Beneficiada (hab.)</label>
+            <input type="number" value="416">
+          </div>
+          <div class="field">
+            <label>
+              ¿Es FEN? <span class="req">*</span>
+              <span class="badge badge-new">+ clasificaciones</span>
+            </label>
+            <div class="fen-group">
+              <label class="chk-row">
+                <input type="checkbox" name="es_fen"> Es FEN
+              </label>
+              <hr class="fen-divider">
+              <div class="cls-label">Nuevas clasificaciones</div>
+              <label class="chk-row">
+                <input type="checkbox" name="es_plia"> Es PLIA
+              </label>
+              <label class="chk-row">
+                <input type="checkbox" name="es_ppcc_ana"> Es PPCC ANA
+              </label>
+              <label class="chk-row">
+                <input type="checkbox" name="es_entidad"> Es Entidad
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Estado Ficha Técnica</label>
+            <select>
+              <option value="">(Seleccione una opción)</option>
+              <option>INDENTIFICADA</option>
+              <option>FORMULADA</option>
+              <option>APROBADA</option>
+              <option>OBSERVADA</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>
+              Estado Intervención
+              <span class="badge badge-new">+ comentario obligatorio</span>
+            </label>
+            <select id="est_intervencion" onchange="onEstadoChange(this.value)">
+              <option value="">(Seleccione una opción)</option>
+              <option value="DESESTIMADA">DESESTIMADA</option>
+              <option value="EJECUTADA">EJECUTADA</option>
+              <option value="EN_EJECUCION">EN EJECUCIÓN</option>
+              <option value="PARALIZADA">PARALIZADA</option>
+              <option value="PROGRAMADA_ENERO">PROGRAMADA ENERO</option>
+              <option value="PROGRAMADA_FEBRERO">PROGRAMADA FEBRERO</option>
+              <option value="PROGRAMADA_MARZO">PROGRAMADA MARZO</option>
+              <option value="PROGRAMADA_ABRIL">PROGRAMADA ABRIL</option>
+              <option value="PROGRAMADA_MAYO">PROGRAMADA MAYO</option>
+              <option value="PROGRAMADA_JUNIO" selected>PROGRAMADA JUNIO</option>
+              <option value="PROGRAMADA_JULIO">PROGRAMADA JULIO</option>
+              <option value="PROGRAMADA_AGOSTO">PROGRAMADA AGOSTO</option>
+              <option value="PROGRAMADA_SETIEMBRE">PROGRAMADA SETIEMBRE</option>
+              <option value="PROGRAMADA_OCTUBRE">PROGRAMADA OCTUBRE</option>
+              <option value="PROGRAMADA_NOVIEMBRE">PROGRAMADA NOVIEMBRE</option>
+              <option value="PROGRAMADA_DICIEMBRE">PROGRAMADA DICIEMBRE</option>
+            </select>
+
+            <!-- COMENTARIO DE CAMBIO DE ESTADO (aparece siempre que cambia) -->
+            <div class="estado-comment-box" id="div_comentario">
+              <div class="comment-label" id="lbl_comentario">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="txt_lbl_comentario">Comentario de cambio de estado</span>
+                <span style="color:var(--danger)">*</span>
+              </div>
+              <textarea id="txt_comentario" rows="3" maxlength="500"
+                placeholder="Escriba el motivo del cambio de estado..."
+                oninput="document.getElementById('cc_est').textContent=this.value.length"
+                required></textarea>
+              <div class="char-count"><span id="cc_est">0</span> / 500 caracteres</div>
+            </div>
+
+          </div>
+
+          <div class="field">
+            <label>Combustible Real (Gln)</label>
+            <input type="number" value="1144">
+          </div>
+          <div class="field">
+            <label>Plazo (Días)</label>
+            <input type="number" value="14">
+          </div>
+
+          <div class="field">
+            <label>Fecha Inicio</label>
+            <input type="date" value="2026-03-01">
+          </div>
+          <div class="field">
+            <label>Fecha Término</label>
+            <input type="date" value="2026-03-14">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 4: Coordenadas y cierre -->
+    <div class="form-section">
+      <div class="section-header">Coordenadas y Datos de Cierre</div>
+      <div class="section-body">
+
+        <div class="grid4" style="margin-bottom:12px">
+          <span class="coord-label">Coordenada Inicio: Este <span class="req">*</span></span>
+          <input type="number" value="100000" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Outfit',sans-serif">
+          <span class="coord-label">Norte <span class="req">*</span></span>
+          <input type="number" value="1000000" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Outfit',sans-serif">
+
+          <span class="coord-label">Coordenada Fin: Este <span class="req">*</span></span>
+          <input type="number" value="100000" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Outfit',sans-serif">
+          <span class="coord-label">Norte <span class="req">*</span></span>
+          <input type="number" value="1000000" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:'Outfit',sans-serif">
+        </div>
+
+        <div class="grid2">
+          <div class="field">
+            <label>Link Informe Cierre</label>
+            <input type="text" placeholder="URL del informe...">
+          </div>
+          <div class="field">
+            <label>HT Informe Cierre</label>
+            <input type="text">
+          </div>
+
+          <div class="field">
+            <label>Entidad <span class="req">*</span></label>
+            <input type="text" value="MUNICIPALIDAD DISTRITAL DE LUCRE">
+          </div>
+          <div class="field">
+            <label>Periodo <span class="req">*</span></label>
+            <select>
+              <option>2024</option>
+              <option>2025</option>
+              <option selected>2026</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Secuencia Funcional</label>
+            <input type="text">
+          </div>
+          <div class="field">
+            <label>Precio de combustible por Gln</label>
+            <input type="number">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEYENDA -->
+    <div class="form-legend">
+      <div class="legend-title">Cambios aplicados en este formulario</div>
+      <div class="legend-items">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#1565c0"></div>
+          Marco Legal convertido a campo seleccionable
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#2e7d32"></div>
+          Clasificaciones PLIA / PPCC ANA / Entidad junto a ¿Es FEN?
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#2e7d32"></div>
+          Comentario obligatorio al cambiar Estado Intervención
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#c62828"></div>
+          Campo motivo especial cuando estado es DESESTIMADA
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const estadoAnterior = { valor: 'PROGRAMADA_JUNIO' };
+
+function onEstadoChange(nuevoEstado) {
+  const div     = document.getElementById('div_comentario');
+  const txt     = document.getElementById('txt_comentario');
+  const lbl     = document.getElementById('txt_lbl_comentario');
+  const box     = document.getElementById('div_comentario');
+
+  if (!nuevoEstado) {
+    div.style.display = 'none';
+    txt.removeAttribute('required');
+    txt.value = '';
+    document.getElementById('cc_est').textContent = '0';
+    return;
+  }
+
+  // Siempre muestra comentario al cambiar estado
+  div.style.display = 'block';
+  txt.setAttribute('required', 'required');
+  txt.value = '';
+  document.getElementById('cc_est').textContent = '0';
+
+  // Personaliza el mensaje según el estado
+  if (nuevoEstado === 'DESESTIMADA') {
+    box.className = 'estado-comment-box desestimado';
+    lbl.textContent = 'Motivo de desestimación de la intervención';
+    txt.placeholder = 'Describa el motivo por el cual se desestima esta intervención...';
+  } else if (nuevoEstado === 'PARALIZADA') {
+    box.className = 'estado-comment-box';
+    lbl.textContent = 'Motivo de paralización';
+    txt.placeholder = 'Indique el motivo por el cual se paraliza la intervención...';
+  } else if (nuevoEstado === 'EJECUTADA') {
+    box.className = 'estado-comment-box';
+    lbl.textContent = 'Comentario de cierre';
+    txt.placeholder = 'Confirme el cierre de la intervención y agregue observaciones...';
+  } else {
+    box.className = 'estado-comment-box';
+    lbl.textContent = 'Motivo del cambio de estado';
+    txt.placeholder = 'Escriba el motivo del cambio de estado...';
+  }
+
+  txt.focus();
+}
+
+function guardar() {
+  const est = document.getElementById('est_intervencion').value;
+  const com = document.getElementById('txt_comentario').value.trim();
+
+  if (est && !com) {
+    document.getElementById('txt_comentario').style.borderColor = '#c62828';
+    document.getElementById('txt_comentario').focus();
+    alert('El comentario de cambio de estado es obligatorio.');
+    return;
+  }
+
+  document.getElementById('txt_comentario').style.borderColor = '';
+  alert('✅ Intervención guardada correctamente.\n\nEstado: ' + est + '\nComentario: ' + (com || 'N/A'));
+}
+</script>
+
+</body>
+</html>
