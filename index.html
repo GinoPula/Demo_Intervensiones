@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PNC Maquinarias — Sistema Completo v3</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+:root{
+  --blue:#1565C0;--blue-d:#0D47A1;--blue-l:#E3F2FD;--blue-m:#BBDEFB;
+  --green:#2E7D32;--green-l:#E8F5E9;--orange:#E65100;--orange-l:#FFF3E0;
+  --red:#C62828;--red-l:#FFEBEE;--yellow:#F9A825;--yellow-l:#FFFDE7;
+  --sb:#0F172A;--bg:#F1F5F9;--surf:#F8FAFC;--bdr:#E2E8F0;
+  --txt:#1E293B;--mut:#64748B;--wht:#FFFFFF;
+  --r:8px;--rl:12px;--sw:220px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);font-size:13px;display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sb{width:var(--sw);background:var(--sb);display:flex;flex-direction:column;height:100vh;overflow-y:auto;flex-shrink:0}
+.sb-brand{padding:14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-chip{background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:4px}
+.sb-name{color:#fff;font-size:12px;font-weight:600}
+.sb-sub{color:#475569;font-size:10px}
+.sb-sec{padding:12px 14px 3px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#334155}
+.sbi{display:flex;align-items:center;gap:8px;padding:6px 13px;font-size:11px;color:#64748B;border-radius:6px;margin:1px 6px;cursor:pointer;transition:all .15s}
+.sbi:hover{background:rgba(255,255,255,.06);color:#fff}
+.sbi.on{background:rgba(21,101,192,.25);color:#90CAF9;font-weight:600}
+.sbi svg{width:14px;height:14px;flex-shrink:0}
+.sb-user{margin-top:auto;padding:10px 14px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:8px}
+.sb-av{width:28px;height:28px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{background:var(--blue);color:#fff;padding:0 18px;height:50px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-t{font-size:14px;font-weight:700}
+.tb-s{font-size:10px;opacity:.8;margin-top:1px}
+.tb-b{font-size:10px;opacity:.65}
+.toolbar{background:#fff;border-bottom:1px solid var(--bdr);padding:8px 18px;display:flex;gap:6px;align-items:center;flex-shrink:0}
+.page{flex:1;overflow-y:auto;padding:16px 18px}
+
+/* BTN */
+.btn{padding:6px 14px;border:none;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:inherit;transition:all .15s;white-space:nowrap}
+.btn:hover{filter:brightness(.92)}
+.btn:active{transform:scale(.98)}
+.bp{background:var(--blue);color:#fff}
+.bg2{background:var(--green);color:#fff}
+.br{background:var(--red);color:#fff}
+.bo{background:var(--orange);color:#fff}
+.bw{background:transparent;border:1px solid var(--bdr);color:var(--txt)}
+.by{background:var(--yellow);color:#fff}
+.bsm{padding:4px 9px;font-size:11px}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--bdr);border-radius:var(--rl);overflow:hidden;margin-bottom:14px}
+.ch{background:var(--surf);border-bottom:1px solid var(--bdr);padding:8px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);display:flex;align-items:center;justify-content:space-between}
+.cb{padding:14px}
+
+/* FORM */
+.fg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.fg3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:12px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label{font-size:11px;color:var(--mut);font-weight:500}
+.req{color:var(--red)}
+.f input,.f select,.f textarea{padding:6px 9px;border:1px solid var(--bdr);border-radius:var(--r);font-size:12px;font-family:inherit;outline:none;transition:border-color .2s;width:100%}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--blue)}
+.f input[readonly]{background:var(--surf);color:var(--mut)}
+.f textarea{resize:vertical;min-height:60px}
+.fsec{grid-column:1/-1;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);padding-bottom:6px;border-bottom:1px solid var(--bdr);margin-bottom:2px}
+.f2c{grid-column:1/-1}
+
+/* FILTERS */
+.fbar{background:#fff;border:1px solid var(--bdr);border-radius:var(--rl);padding:10px 14px;margin-bottom:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.ff{display:flex;flex-direction:column;gap:3px;flex:1;min-width:110px}
+.ff label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+.ff select,.ff input{padding:6px 9px;border:1px solid var(--bdr);border-radius:var(--r);font-size:12px;font-family:inherit;outline:none}
+.ff select:focus,.ff input:focus{border-color:var(--blue)}
+
+/* TABLE */
+.tw{background:#fff;border:1px solid var(--bdr);border-radius:var(--rl);overflow:hidden}
+.dt{width:100%;border-collapse:collapse}
+.dt th{background:var(--blue);color:#fff;padding:8px 10px;font-size:11px;font-weight:600;text-align:left;white-space:nowrap}
+.dt td{padding:7px 10px;font-size:12px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--surf)}
+.dt tr:nth-child(even) td{background:#FAFAFA}
+.tf{padding:8px 14px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--mut);border-top:1px solid var(--bdr)}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap}
+.b-green{background:var(--green-l);color:var(--green)}
+.b-red{background:var(--red-l);color:var(--red)}
+.b-blue{background:var(--blue-l);color:var(--blue)}
+.b-orange{background:var(--orange-l);color:var(--orange)}
+.b-gray{background:#F5F5F5;color:#616161}
+.b-yellow{background:var(--yellow-l);color:var(--yellow)}
+
+/* FEN ROW */
+.fen-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:7px 10px;border:1px solid var(--bdr);border-radius:var(--r);background:var(--surf)}
+.fen-item{display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer}
+.fen-item input{width:14px;height:14px;cursor:pointer;accent-color:var(--blue)}
+.fen-sep{width:1px;height:16px;background:var(--bdr)}
+.fen-cls{font-size:9px;color:var(--mut);font-weight:700;text-transform:uppercase}
+
+/* COMMENT BOX */
+.cbox{border-radius:var(--r);padding:10px;margin-top:6px;border:1px solid}
+.cbox-w{background:var(--orange-l);border-color:#FFB74D}
+.cbox-d{background:var(--red-l);border-color:#EF9A9A}
+.cbox label{font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;margin-bottom:5px}
+.cbox-w label{color:var(--orange)}
+.cbox-d label{color:var(--red)}
+.char-c{font-size:10px;color:var(--mut);text-align:right;margin-top:2px}
+
+/* UTM */
+.utm-z{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.utm-c{border:1.5px solid var(--bdr);border-radius:var(--r);padding:10px;cursor:pointer;text-align:center;transition:all .15s}
+.utm-c:hover{border-color:var(--blue)}
+.utm-c.sel{border:2px solid var(--blue);background:var(--blue-l)}
+.utm-n{font-size:20px;font-weight:800;line-height:1}
+.utm-r{font-size:9px;color:var(--mut);margin-top:2px}
+.c-ok{font-size:10px;color:var(--green);background:var(--green-l);padding:2px 7px;border-radius:4px;margin-top:2px;display:inline-block}
+.c-err{font-size:10px;color:var(--red);background:var(--red-l);padding:2px 7px;border-radius:4px;margin-top:2px;display:inline-block}
+
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:flex;align-items:center;justify-content:center}
+.modal{background:#fff;border-radius:var(--rl);width:92%;max-width:920px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.mh{background:var(--blue);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
+.mt2{font-size:14px;font-weight:600}
+.mb{padding:18px}
+.mf{padding:12px 18px;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end;gap:6px}
+.xb{background:none;border:none;color:#fff;font-size:18px;cursor:pointer}
+
+/* HIST TABLE (Modificar Estado) */
+.hist{margin-top:14px}
+.hist-t{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:6px}
+
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.sc{background:#fff;border:1px solid var(--bdr);border-radius:var(--rl);padding:14px;display:flex;align-items:center;gap:12px}
+.si{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.sv{font-size:22px;font-weight:800;line-height:1}
+.sl{font-size:11px;color:var(--mut);margin-top:2px}
+.bar-r{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px}
+.bar-l{width:120px;text-align:right;flex-shrink:0;font-size:11px}
+.bar-t{flex:1;background:#E2E8F0;border-radius:4px;height:8px;overflow:hidden}
+.bar-f{height:100%;border-radius:4px;background:var(--blue)}
+.bar-v{width:32px;font-weight:600}
+
+/* ASIGN OPER */
+.ao-box{background:var(--orange-l);border:1px solid #FFB74D;border-radius:var(--r);padding:12px;margin-bottom:12px}
+.ao-t{font-size:11px;font-weight:700;color:var(--orange);margin-bottom:8px}
+.ao-links{display:flex;gap:8px;margin-top:8px}
+.ao-lnk{font-size:11px;color:var(--blue);cursor:pointer;text-decoration:underline}
+
+/* PARTE DIARIO */
+.pd-stat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.pd-card{background:var(--blue-l);border-radius:var(--r);padding:12px;text-align:center}
+.pd-v{font-size:20px;font-weight:700;color:var(--blue)}
+.pd-l{font-size:11px;color:var(--mut)}
+
+/* REPORTES */
+.rg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.rb{padding:11px 12px;border:none;border-radius:var(--r);cursor:pointer;font-size:12px;font-weight:500;display:flex;align-items:center;gap:7px;font-family:inherit;transition:all .15s}
+.rb:hover{filter:brightness(.9)}
+.re{background:#1B7A3A;color:#fff}
+.rw{background:var(--blue);color:#fff}
+.rg2{background:#6A1B9A;color:#fff}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sb">
+  <div class="sb-brand">
+    <div class="sb-chip">PNC</div>
+    <div class="sb-name">PNC Maquinarias</div>
+    <div class="sb-sub">Ministerio de Vivienda</div>
+  </div>
+
+  <div class="sb-sec">Principal</div>
+  <div class="sbi on" id="nav-dash" onclick="go('dash')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
+  </div>
+
+  <div class="sb-sec">PNC Mantenimiento</div>
+  <div class="sbi" id="nav-maq" onclick="go('maq')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2M8 7V5a2 2 0 00-4 0v2"/></svg>Estado Maquinarias
+  </div>
+  <div class="sbi" id="nav-ot" onclick="go('ot')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Orden de Trabajo
+  </div>
+  <div class="sbi" id="nav-blg" onclick="go('blg')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>O.T. Backlog
+  </div>
+  <div class="sbi" id="nav-seg" onclick="go('seg')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>O.T. Seguimiento
+  </div>
+  <div class="sbi" id="nav-pm" onclick="go('pm')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Programación PM
+  </div>
+
+  <div class="sb-sec">PNC Maquinarias</div>
+  <div class="sbi" id="nav-int" onclick="go('int')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>1. Intervenciones
+  </div>
+  <div class="sbi" id="nav-act" onclick="go('act')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>2. Asig. Activos
+  </div>
+  <div class="sbi" id="nav-avz" onclick="go('avz')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>3. Avances
+  </div>
+  <div class="sbi" id="nav-oper" onclick="go('oper')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>4. Asig. Operadores
+  </div>
+  <div class="sbi" id="nav-conv" onclick="go('conv')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>5. Convenios
+  </div>
+  <div class="sbi" id="nav-rpt" onclick="go('rpt')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>6. Reportes PNC
+  </div>
+  <div class="sbi" id="nav-pd" onclick="go('pd')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/></svg>Parte Diario
+  </div>
+
+  <div class="sb-sec">PNC Personal</div>
+  <div class="sbi" id="nav-cas" onclick="go('cas')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Contratos CAS
+  </div>
+
+  <div class="sb-user">
+    <div class="sb-av">GP</div>
+    <div>
+      <div style="font-size:10px;font-weight:600;color:#fff">Gino F. Pulache</div>
+      <div style="font-size:9px;color:#475569">Administrador PNC</div>
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="v-dash">
+  <div class="topbar"><div><div class="tb-t">DASHBOARD — PNC MAQUINARIAS</div><div class="tb-s">Sistema v3 | PHP 8.1 + PostgreSQL 14.22 + CodeIgniter 3</div></div><span class="tb-b">Inicio / Dashboard</span></div>
+  <div class="page">
+    <div class="sg">
+      <div class="sc"><div class="si" style="background:#E3F2FD">📋</div><div><div class="sv" style="color:var(--blue)">127</div><div class="sl">Intervenciones 2026</div></div></div>
+      <div class="sc"><div class="si" style="background:#E8F5E9">⚙️</div><div><div class="sv" style="color:var(--green)">89</div><div class="sl">Maquinaria Operativa</div></div></div>
+      <div class="sc"><div class="si" style="background:#FFF3E0">📄</div><div><div class="sv" style="color:var(--orange)">45</div><div class="sl">Convenios Vigentes</div></div></div>
+      <div class="sc"><div class="si" style="background:#F3E5F5">👥</div><div><div class="sv" style="color:#6A1B9A">125K</div><div class="sl">Pob. Beneficiada</div></div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="card"><div class="ch">Intervenciones por Estado</div><div class="cb">
+        <div class="bar-r"><span class="bar-l"><span class="badge b-green">EJECUTADA</span></span><div class="bar-t"><div class="bar-f" style="width:54%"></div></div><span class="bar-v">68</span></div>
+        <div class="bar-r"><span class="bar-l"><span class="badge b-blue">EN EJECUCIÓN</span></span><div class="bar-t"><div class="bar-f" style="width:27%;background:var(--blue)"></div></div><span class="bar-v">34</span></div>
+        <div class="bar-r"><span class="bar-l"><span class="badge b-gray">PROGRAMADA</span></span><div class="bar-t"><div class="bar-f" style="width:14%;background:#9E9E9E"></div></div><span class="bar-v">18</span></div>
+        <div class="bar-r"><span class="bar-l"><span class="badge b-orange">PARALIZADA</span></span><div class="bar-t"><div class="bar-f" style="width:3%;background:var(--orange)"></div></div><span class="bar-v">4</span></div>
+        <div class="bar-r"><span class="bar-l"><span class="badge b-red">DESESTIMADA</span></span><div class="bar-t"><div class="bar-f" style="width:2%;background:var(--red)"></div></div><span class="bar-v">3</span></div>
+      </div></div>
+      <div class="card"><div class="ch">Maquinaria por Estado</div><div class="cb">
+        <div class="bar-r"><span class="bar-l"><span class="badge b-green">OPERATIVO</span></span><div class="bar-t"><div class="bar-f" style="width:88%;background:var(--green)"></div></div><span class="bar-v">89</span></div>
+        <div class="bar-r"><span class="bar-l"><span class="badge b-orange">MANTTO.</span></span><div class="bar-t"><div class="bar-f" style="width:6%;background:var(--orange)"></div></div><span class="bar-v">6</span></div>
+        <div class="bar-r"><span class="bar-l"><span class="badge b-red">INOPERATIVO</span></span><div class="bar-t"><div class="bar-f" style="width:6%;background:var(--red)"></div></div><span class="bar-v">6</span></div>
+        <div style="margin-top:12px;background:var(--blue-l);border-radius:var(--r);padding:10px;font-size:12px;color:var(--blue)">
+          <strong>12</strong> unidades con PM próximo a vencer
+        </div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ESTADO MAQUINARIAS ═══ -->
+<div id="v-maq" style="display:none">
+  <div class="topbar"><div><div class="tb-t">MAQUINARIAS (PNC)</div><div class="tb-s" id="maq-sub">Relación de Maquinarias PNC</div></div><span class="tb-b">Inicio / Estado de Maquinaria</span></div>
+  <div class="toolbar" id="maq-tb"><button class="btn bg2" onclick="alert('Generando Reporte Estado Actual en Excel...')">⬇ Reporte Estado Actual</button></div>
+  <div id="maq-lista" class="page">
+    <div class="fbar">
+      <div class="ff"><label>UBO</label><select onchange="maqF()"><option>TODOS</option><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option><option>CUSCO</option><option>LA LIBERTAD</option><option>LORETO</option></select></div>
+      <div class="ff"><label>Región</label><select><option>TODOS</option><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option></select></div>
+      <div class="ff"><label>Flota</label><select onchange="maqF()"><option>TODOS</option><option>MAQUINARIA</option><option>VEHÍCULO</option></select></div>
+      <div class="ff"><label>Unidad</label><select><option>TODOS</option></select></div>
+    </div>
+    <div class="tw"><table class="dt" id="maq-tbl">
+      <thead><tr><th>Nro</th><th>Código</th><th>UBO</th><th>Región</th><th>Flota</th><th>Tipo Unidad</th><th>Marca</th><th>Modelo</th><th>Estado</th><th>Km</th><th>Horómetro</th><th>Ult.Act.</th><th>Opción</th></tr></thead>
+      <tbody id="maq-body"></tbody>
+    </table>
+    <div class="tf"><span id="maq-cnt">Mostrando registros...</span></div>
+    </div>
+  </div>
+  <!-- FORMULARIO MODIFICAR ESTADO (image6 real) -->
+  <div id="maq-form" style="display:none" class="page">
+    <div class="card">
+      <div class="ch">MODIFICAR ESTADO - CONDICION DE MAQUINARIAS (PNC)
+        <div style="font-size:11px;color:var(--mut)" id="maq-form-titulo"></div>
+      </div>
+      <div class="cb">
+        <div class="fg" style="margin-bottom:12px">
+          <div class="f"><label>UBO</label><select id="mf-ubo"><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option></select></div>
+          <div class="f"><label>Región</label><select id="mf-region"><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option></select></div>
+          <div class="f"><label>Estado</label>
+            <select id="mf-estado"><option value="">(Seleccione una opción)</option><option>OPERATIVO</option><option>INOPERATIVO</option><option>EN MANTENIMIENTO</option><option>EN REPARACIÓN</option></select>
+          </div>
+          <div class="f"><label>Inicio Inoperatividad</label><input type="date" id="mf-ini-inop"></div>
+          <div class="f"><label>Kilometraje</label><input type="number" id="mf-km"></div>
+          <div class="f"><label>Horometro</label><input type="number" id="mf-horo"></div>
+          <div class="f f2c"><label>Comentario</label><textarea id="mf-comment" rows="3"></textarea></div>
+        </div>
+        <div style="text-align:center;margin-bottom:14px">
+          <small style="color:var(--mut)">Hace click en "Agregar y Guardar", para asignar un nuevo estado / condición a la maquinaria.</small>
+        </div>
+        <div style="text-align:center"><button class="btn bo" onclick="maqGuardar()">+ Agregar y Guardar</button></div>
+        <div class="hist">
+          <div class="hist-t">Histórico de Estados / Condición</div>
+          <div class="tw"><table class="dt">
+            <thead><tr><th>Nro</th><th>Activo</th><th>Fecha Registro</th><th>UBO</th><th>Región</th><th>Estado</th><th>Inicio Inoperatividad</th><th>Kilometraje</th><th>Horometro</th><th>Comentario</th><th>Opciones</th></tr></thead>
+            <tbody id="maq-hist"></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OT SEGUIMIENTO ═══ -->
+<div id="v-seg" style="display:none">
+  <div class="topbar"><div><div class="tb-t">MAQUINARIAS (PNC)</div><div class="tb-s">Orden de Trabajo</div></div><span class="tb-b">Inicio / Mantenimiento / Ordenes de Trabajo</span></div>
+  <div class="toolbar"><button class="btn bg2" onclick="alert('Descargando Excel...')">⬇ Descargar</button></div>
+  <div class="page">
+    <div class="fbar">
+      <div class="ff"><label>UBO</label><select><option>TODOS</option><option>AMAZONAS</option><option>TUMBES</option></select></div>
+      <div class="ff"><label>Flota</label><select><option>TODOS</option><option>MAQUINARIA</option><option>VEHÍCULO</option></select></div>
+      <div class="ff"><label>Unidad</label><select><option>TODOS</option></select></div>
+      <div class="ff"><label>Estado</label><select><option>TODOS</option><option>GENERADA</option><option>EN PROCESO</option><option>EN ADQUISICIÓN</option><option>CERRADO</option></select></div>
+      <div class="ff"><label>Entidad</label><select><option>TODOS</option><option>MVCS</option><option>Otros</option></select></div>
+    </div>
+    <div class="tw"><table class="dt">
+      <thead><tr><th>OT</th><th>Número</th><th>Código</th><th>UBO</th><th>Tipo OT</th><th>Título</th><th>Entidad</th><th>Hoja Trámite</th><th>Fecha</th><th>Área</th><th>Documento</th><th>Fecha Trámite</th><th>Estado OT</th></tr></thead>
+      <tbody>
+        <tr onclick="abrirOT()" style="cursor:pointer">
+          <td><span style="color:var(--blue);font-weight:600;cursor:pointer">000001-2017</span></td>
+          <td>000001-2017</td><td style="color:var(--orange);font-weight:600">EGV-820</td>
+          <td>TUMBES</td><td>MANT. PREVENTIVO</td>
+          <td>MANTENIMIENTO PREVENTIVO TIPO PM3 CICLO 4</td>
+          <td>MVCS</td><td></td><td>07/03/2017</td><td></td><td></td><td></td>
+          <td><span class="badge b-gray">CERRADO</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="tf"><span>Mostrando 1 de 1 registros</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OT BACKLOG ═══ -->
+<div id="v-blg" style="display:none">
+  <div class="topbar"><div><div class="tb-t">O.T. REGISTRO BACKLOG</div><div class="tb-s">Registro de Requerimientos - Backlog</div></div><span class="tb-b">Inicio / Mantenimiento / Backlog</span></div>
+  <div class="toolbar"><button class="btn bg2" onclick="abrirBlg()">+ Agregar Backlog</button></div>
+  <div class="page">
+    <div class="fbar">
+      <div class="ff"><label>UBO</label><select><option>TODOS</option><option>AMAZONAS</option></select></div>
+      <div class="ff"><label>Unidad</label><select><option>TODOS</option></select></div>
+    </div>
+    <div class="tw"><table class="dt">
+      <thead><tr><th>Fecha</th><th>Código</th><th>UBO</th><th>Región</th><th>Tipo Unidad</th><th>Marca</th><th>Reportado por</th><th>Descripción</th></tr></thead>
+      <tbody><tr><td colspan="8" style="text-align:center;color:var(--mut);padding:20px">Sin registros</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══ PROGRAMACIÓN PM ═══ -->
+<div id="v-pm" style="display:none">
+  <div class="topbar"><div><div class="tb-t">PROGRAMACIÓN DE MANTENIMIENTO PREVENTIVO</div><div class="tb-s">Maquinarias PNC</div></div><span class="tb-b">Inicio / Programación PM</span></div>
+  <div class="toolbar">
+    <button class="btn bg2" onclick="alert('Descargando Programación PM...')">⬇ Programación de PM</button>
+    <button class="btn bg2" onclick="alert('Descargando Historial...')">⬇ Historial</button>
+  </div>
+  <div class="page">
+    <div class="fbar">
+      <div class="ff"><label>UBO</label><select><option>TODOS</option></select></div>
+      <div class="ff"><label>Región</label><select><option>TODOS</option></select></div>
+      <div class="ff"><label>Flota</label><select><option>TODOS</option><option>MAQUINARIA</option><option>VEHÍCULO</option></select></div>
+      <div class="ff"><label>Unidad</label><select><option>TODOS</option></select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div class="card"><div class="ch" style="background:#FFEBEE;color:var(--red)">🔴 VENCIDOS (3)</div>
+        <table class="dt"><thead><tr><th>Código</th><th>En</th><th>Sistema</th><th>Sig.PM</th></tr></thead>
+        <tbody>
+          <tr><td>PNC-005-LOR</td><td>9,400</td><td>HORAS</td><td>9,000</td></tr>
+          <tr><td>PNC-003-CUS</td><td>6,800</td><td>HORAS</td><td>6,500</td></tr>
+          <tr><td>PNC-009-PUN</td><td>5,200</td><td>HORAS</td><td>5,000</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="ch" style="background:var(--orange-l);color:var(--orange)">🟠 POR VENCER 5% (5)</div>
+        <table class="dt"><thead><tr><th>Código</th><th>En</th><th>Sistema</th><th>Sig.PM</th></tr></thead>
+        <tbody>
+          <tr><td>EGM-788</td><td>4,250</td><td>HORAS</td><td>4,500</td></tr>
+          <tr><td>PNC-007</td><td>3,800</td><td>HORAS</td><td>4,000</td></tr>
+          <tr><td>PNC-004</td><td>47,500</td><td>ODÓM.</td><td>50,000</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card"><div class="ch" style="background:var(--yellow-l);color:var(--yellow)">🟡 POR VENCER 10% (7)</div>
+        <table class="dt"><thead><tr><th>Código</th><th>En</th><th>Sistema</th><th>Sig.PM</th></tr></thead>
+        <tbody>
+          <tr><td>PNC-002</td><td>3,180</td><td>HORAS</td><td>3,500</td></tr>
+          <tr><td>PNC-006</td><td>2,100</td><td>HORAS</td><td>2,500</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ INTERVENCIONES ═══ -->
+<div id="v-int" style="display:none;overflow:hidden">
+  <div class="topbar"><div><div class="tb-t">INTERVENCIONES (PNC)</div><div class="tb-s" id="int-sub">Relación de Intervenciones</div></div><span class="tb-b" id="int-bread">Inicio / Intervención</span></div>
+  <div class="toolbar" id="int-tb">
+    <button class="btn bg2" onclick="intNueva()">+ Nueva</button>
+    <button class="btn bw" onclick="alert('Generando Excel...')">⬇ Generar Excel</button>
+  </div>
+  <div id="int-lista" class="page">
+    <div class="fbar">
+      <div class="ff"><label>UBO</label><select id="if-ubo" onchange="intF()"><option>TODOS</option><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option><option>LA LIBERTAD</option><option>LORETO</option></select></div>
+      <div class="ff"><label>Estado</label><select id="if-est" onchange="intF()"><option>TODOS</option><option>PROGRAMADA JUNIO</option><option>EN EJECUCIÓN</option><option>EJECUTADA</option><option>PARALIZADA</option><option>DESESTIMADA</option></select></div>
+      <div class="ff" style="max-width:100px"><label>Período</label><select id="if-per" onchange="intF()"><option>TODOS</option><option>2024</option><option>2025</option><option selected>2026</option></select></div>
+      <div class="ff"><label>Buscar</label><input type="text" id="if-q" oninput="intF()" placeholder="Código, UBO, ficha..."></div>
+    </div>
+    <div class="tw"><table class="dt"><thead>
+      <tr><th>Nro.</th><th>Intervención</th><th>UBO</th><th>Departamento</th><th>Tipo</th><th>Estado</th><th>Ficha Técnica</th><th>Descripción</th><th>Inicio</th><th>Término</th><th>M3</th><th>KM</th><th>Opción</th></tr>
+    </thead><tbody id="int-body"></tbody></table>
+    <div class="tf"><span id="int-cnt"></span></div>
+    </div>
+  </div>
+
+  <!-- FORMULARIO COMPLETO (image22+23 real) -->
+  <div id="int-form" style="display:none;overflow-y:auto" class="page">
+    <div class="card"><div class="ch">Datos de la Intervención</div><div class="cb">
+      <div class="fg">
+        <div class="f"><label>Número Intervención</label><input id="fi-num" readonly></div>
+        <div class="f"><label>UBO</label><select id="fi-ubo"><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option><option>CUSCO</option><option>LA LIBERTAD</option><option>LORETO</option></select></div>
+        <div class="f"><label>Tipo Intervención <span class="req">*</span></label>
+          <select id="fi-tipo" onchange="cargaMarcos()">
+            <option value="">Seleccione...</option><option>PREVENCIÓN</option><option>EMERGENCIA</option><option>URGENCIA</option>
+          </select></div>
+        <div class="f"><label>Marco Legal : Convenio <span class="req">*</span> <span class="badge b-blue" style="font-size:9px">filtrado automático</span></label>
+          <select id="fi-marco"><option value="">— Seleccione Tipo primero —</option></select>
+          <div id="fi-marco-info" style="display:none;font-size:10px;color:var(--green);margin-top:2px"></div>
+        </div>
+        <div class="f"><label>Estado de Convenio</label><select id="fi-estconv"><option>VIGENTE</option><option>VENCIDO</option><option>RESCINDIDO</option></select></div>
+        <div></div>
+        <div class="f"><label>Departamento <span class="req">*</span></label><select id="fi-depto" onchange="cargaMarcos()"><option value="">Seleccione...</option><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option><option>CUSCO</option><option>LA LIBERTAD</option><option>LORETO</option></select></div>
+        <div class="f"><label>Provincia <span class="req">*</span></label><input id="fi-prov" placeholder="Provincia"></div>
+        <div class="f"><label>Distrito <span class="req">*</span></label><input id="fi-dist" placeholder="Distrito"></div>
+        <div class="f"><label>Sector</label><input id="fi-sect"></div>
+        <div class="f"><label>Ficha Técnica <span class="req">*</span></label><input id="fi-ficha" placeholder="Ej: 002-2026-LDP-ANC"></div>
+        <div class="f"><label>Link</label><input id="fi-link" placeholder="URL del documento..."></div>
+        <div class="f"><label>Supervisor</label><input id="fi-sup"></div>
+        <div class="f"><label>Actividad <span class="req">*</span></label>
+          <select id="fi-act">
+            <option value="">Seleccione...</option>
+            <optgroup label="Prevención >15d"><option value="LD-P">LD-P — Limpieza/descolmatación cauces</option><option value="LDOA-P">LDOA-P — Drenajes y obras de arte</option></optgroup>
+            <optgroup label="Prevención <15d"><option value="LD-PI">LD-PI — Acción rápida cauces</option></optgroup>
+            <optgroup label="Emergencia"><option value="LD-E">LD-E — Limpieza/descolmatación</option><option value="DA-E">DA-E — Distribución agua</option><option value="LETV-E">LETV-E — Limpieza escombros</option><option value="TA-E">TA-E — Tratamiento agua</option></optgroup>
+            <optgroup label="Urgencia"><option value="LD-U">LD-U — Limpieza drenes y ríos</option><option value="AA-U">AA-U — Abastecimiento agua</option><option value="RLE-U">RLE-U — Remoción escombros</option><option value="MTV-U">MTV-U — Transitabilidad vías</option><option value="RRAD-U">RRAD-U — Rehabilitación redes</option></optgroup>
+          </select></div>
+      </div>
+    </div></div>
+
+    <div class="card"><div class="ch">Montos y Metas</div><div class="cb"><div class="fg">
+      <div class="f"><label>Monto Contratado (FTI)</label><input type="number" id="fi-mcontrat"></div>
+      <div class="f"><label>Monto Ejecutado (Informe de Cierre)</label><input type="number" id="fi-mejec"></div>
+      <div class="f"><label>Meta (KM)</label><input type="number" id="fi-km"></div>
+      <div class="f"><label>Meta (M3)</label><input type="number" id="fi-m3"></div>
+      <div class="f"><label>Monto Combustible Aportes</label><input type="number"></div>
+      <div class="f"><label>Monto Combustible MVCS</label><input type="number"></div>
+      <div class="f"><label>Monto Mantenimiento Aportes</label><input type="number"></div>
+      <div class="f"><label>Monto Mantenimiento MVCS</label><input type="number"></div>
+      <div class="f"><label>Monto Personal Aportes</label><input type="number"></div>
+      <div class="f"><label>Monto Personal MVCS</label><input type="number"></div>
+    </div></div></div>
+
+    <div class="card"><div class="ch">Estado e Indicadores</div><div class="cb"><div class="fg">
+      <div class="f"><label>Población Beneficiada (hab.)</label><input type="number" id="fi-pob"></div>
+      <div class="f">
+        <label>¿Es FEN? <span class="req">*</span> <span class="badge b-green" style="font-size:9px">+ PLIA / PPCC ANA / Entidad</span></label>
+        <div class="fen-row">
+          <label class="fen-item"><input type="checkbox" id="fi-fen"> Es FEN</label>
+          <div class="fen-sep"></div>
+          <span class="fen-cls">Clasif.:</span>
+          <label class="fen-item"><input type="checkbox" id="fi-plia"> Es PLIA</label>
+          <label class="fen-item"><input type="checkbox" id="fi-ppcc"> Es PPCC ANA</label>
+          <label class="fen-item"><input type="checkbox" id="fi-entidad"> Es Entidad</label>
+        </div>
+      </div>
+      <div class="f"><label>Estado Ficha Técnica</label>
+        <select id="fi-estficha"><option>EN ELABORACION</option><option>IDENTIFICADA</option><option>FORMULADA</option><option>APROBADA</option><option>OBSERVADA</option></select>
+      </div>
+      <div class="f">
+        <label>Estado Intervención <span class="badge b-green" style="font-size:9px">comentario obligatorio</span></label>
+        <select id="fi-estint" onchange="onEstado()">
+          <option value="">Seleccione...</option>
+          <option>DESESTIMADA</option><option>EJECUTADA</option><option>EN EJECUCIÓN</option><option>PARALIZADA</option>
+          <option>PROGRAMADA ENERO</option><option>PROGRAMADA FEBRERO</option><option>PROGRAMADA MARZO</option>
+          <option>PROGRAMADA ABRIL</option><option>PROGRAMADA MAYO</option><option>PROGRAMADA JUNIO</option>
+          <option>PROGRAMADA JULIO</option><option>PROGRAMADA AGOSTO</option><option>PROGRAMADA SETIEMBRE</option>
+          <option>PROGRAMADA OCTUBRE</option><option>PROGRAMADA NOVIEMBRE</option><option>PROGRAMADA DICIEMBRE</option>
+        </select>
+        <div id="fi-cbox" style="display:none"></div>
+      </div>
+      <div class="f"><label>Combustible Real (Gln)</label><input type="number" id="fi-comb"></div>
+      <div class="f"><label>Plazo (Días)</label><input type="number" id="fi-plazo"></div>
+      <div class="f"><label>Fecha Inicio</label><input type="date" id="fi-fini"></div>
+      <div class="f"><label>Fecha Término</label><input type="date" id="fi-fterm"></div>
+    </div></div></div>
+
+    <div class="card"><div class="ch">Coordenadas UTM y Datos de Cierre <span class="badge b-green" style="font-size:9px">Validación Zonas 17/18/19</span></div><div class="cb">
+      <div class="utm-z">
+        <div class="utm-c" id="z17" onclick="selZ(17)"><div class="utm-n" style="color:#0D47A1">17</div><div class="badge b-blue" style="margin:3px auto;display:block;width:fit-content">Zona 17S</div><div class="utm-r">Tumbes, Piura, Lambayeque</div></div>
+        <div class="utm-c sel" id="z18" onclick="selZ(18)"><div class="utm-n" style="color:var(--green)">18</div><div class="badge b-green" style="margin:3px auto;display:block;width:fit-content">Zona 18S</div><div class="utm-r">Lima, Ancash, Cusco, Amazonas</div></div>
+        <div class="utm-c" id="z19" onclick="selZ(19)"><div class="utm-n" style="color:#880E4F">19</div><div class="badge" style="background:#FCE4EC;color:#880E4F;margin:3px auto;display:block;width:fit-content">Zona 19S</div><div class="utm-r">Tacna, Moquegua, Arequipa sur</div></div>
+      </div>
+      <div class="fg">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;margin-bottom:6px">COORDENADA INICIO</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="f"><label>Este <span class="req">*</span></label><input type="number" id="fi-ie" oninput="valC('ie')" placeholder="Ej: 232787"><div id="v-ie"></div></div>
+            <div class="f"><label>Norte <span class="req">*</span></label><input type="number" id="fi-in" oninput="valC('in')" placeholder="Ej: 8916717"><div id="v-in"></div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;margin-bottom:6px">COORDENADA FIN</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="f"><label>Este <span class="req">*</span></label><input type="number" id="fi-fe" oninput="valC('fe')" placeholder="Ej: 232691"><div id="v-fe"></div></div>
+            <div class="f"><label>Norte <span class="req">*</span></label><input type="number" id="fi-fn" oninput="valC('fn')" placeholder="Ej: 8917301"><div id="v-fn"></div></div>
+          </div>
+        </div>
+        <div id="fi-dist-box" style="display:none;grid-column:1/-1;background:var(--blue-l);border-radius:var(--r);padding:8px 12px;font-size:12px;color:var(--blue)"></div>
+        <div class="f"><label>Link Informe Cierre</label><input type="text" id="fi-linf"></div>
+        <div class="f"><label>HT Informe Cierre</label><input type="text" id="fi-ht"></div>
+        <div class="f"><label>Entidad <span class="req">*</span></label><input type="text" id="fi-entid"></div>
+        <div class="f"><label>Período <span class="req">*</span></label><select id="fi-per2"><option>2024</option><option>2025</option><option selected>2026</option></select></div>
+        <div class="f"><label>Secuencia Funcional</label><input type="text" id="fi-sfunc"></div>
+        <div class="f"><label>Precio combustible por galón</label><input type="number" id="fi-pgas"></div>
+        <div class="f f2c"><label>Descripción Intervención <span class="req">*</span></label><textarea id="fi-desc" rows="3"></textarea></div>
+      </div>
+    </div></div>
+
+    <!-- ══ NUEVOS CAMPOS DIRECTIVA N°001-2024 (RF-05 al RF-13) ══ -->
+    <div class="card" style="border:1.5px solid #1565C0">
+      <div class="ch" style="background:#E3F2FD;color:#0D47A1">
+        Campos adicionales — Directiva N° 001-2024/VIVIENDA/VMVU/PNC
+        <span class="badge b-blue" style="font-size:9px">RF-05 al RF-13</span>
+      </div>
+      <div class="cb">
+
+        <!-- RF-08 SINPAD | RF-09 Ubigeo | RF-10 Viabilidad -->
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="f">
+            <label>Código SINPAD <span class="badge b-blue" style="font-size:9px">RF-08</span></label>
+            <input id="fi-sinpad" placeholder="Ej: 2024-0001234" title="Sistema Nacional de Información para la Gestión del Riesgo">
+            <div style="font-size:10px;color:var(--mut);margin-top:2px">Código del punto crítico en SIGRID-CENEPRED</div>
+          </div>
+          <div class="f">
+            <label>Ubigeo <span class="badge b-blue" style="font-size:9px">RF-09</span></label>
+            <input id="fi-ubigeo" placeholder="Ej: 020108" maxlength="6" title="Código INEI de 6 dígitos">
+            <div style="font-size:10px;color:var(--mut);margin-top:2px">Código INEI del distrito (6 dígitos)</div>
+          </div>
+          <div class="f">
+            <label>Viabilidad de la Intervención <span class="badge b-green" style="font-size:9px">RF-10</span></label>
+            <select id="fi-viab" onchange="onViabilidad()">
+              <option value="">— Resultado de la inspección —</option>
+              <option value="SI">✓ SÍ — Viable</option>
+              <option value="NO">✗ NO — No viable</option>
+            </select>
+            <div id="fi-viab-alert" style="display:none;margin-top:4px;font-size:11px;padding:5px 8px;border-radius:4px;background:var(--red-l);color:var(--red);font-weight:600">
+              ⚠️ Intervención NO VIABLE — Se generará informe de respuesta negativa
+            </div>
+          </div>
+        </div>
+
+        <!-- RF-05 Croquis | RF-07 Galería -->
+        <div class="fg" style="margin-bottom:14px">
+          <div class="f">
+            <label>Enlace Croquis de Ubicación <span class="badge b-blue" style="font-size:9px">RF-05</span></label>
+            <input id="fi-croquis" placeholder="https://drive.google.com/... (imagen satelital demarcando la zona)" type="url">
+            <div style="font-size:10px;color:var(--mut);margin-top:2px">Imagen satelital con zona de intervención demarcada</div>
+          </div>
+          <div class="f">
+            <label>Galería Fotográfica <span class="badge b-blue" style="font-size:9px">RF-07</span></label>
+            <input id="fi-galeria" placeholder="https://drive.google.com/... (mínimo 4 fotos del lugar)" type="url">
+            <div style="font-size:10px;color:var(--mut);margin-top:2px">Panel fotográfico — mínimo 4 fotos antes de la intervención</div>
+          </div>
+        </div>
+
+        <!-- RF-06 Tabla maquinaria requerida -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+            Maquinaria, Vehículos y Equipos Requeridos
+            <span class="badge b-blue" style="font-size:9px">RF-06</span>
+            <button class="btn bp bsm" onclick="agregarMaqReq()" style="margin-left:auto">+ Agregar Unidad</button>
+          </div>
+          <div class="tw">
+            <table class="dt" id="maq-req-tbl">
+              <thead>
+                <tr><th>#</th><th>Tipo Unidad</th><th>Marca / Modelo</th><th>Código Geovivienda</th><th>Cant. Horas</th><th>Horómetro Inicio</th><th>Horómetro Fin</th><th>Combustible (Gln)</th><th>Quitar</th></tr>
+              </thead>
+              <tbody id="maq-req-body">
+                <tr id="maq-req-empty"><td colspan="9" style="text-align:center;color:var(--mut);padding:14px;font-size:11px">Haga clic en "+ Agregar Unidad" para registrar la maquinaria requerida</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- RF-11 Botadero/Cantera -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+            Botadero / Cantera
+            <span class="badge b-blue" style="font-size:9px">RF-11</span>
+            <span style="font-size:10px;color:var(--mut);font-weight:400;text-transform:none">(de corresponder)</span>
+          </div>
+          <div class="fg">
+            <div class="f">
+              <label>Descripción Botadero / Cantera</label>
+              <input id="fi-botadero" placeholder="Ej: Botadero municipal KM 3 carretera Catac-Recuay">
+            </div>
+            <div class="f">
+              <label>Distancia (km)</label>
+              <input id="fi-bot-dist" type="number" placeholder="Distancia en km">
+            </div>
+            <div class="f">
+              <label>Coordenada Este (UTM)</label>
+              <input id="fi-bot-este" type="number" placeholder="Ej: 233100">
+            </div>
+            <div class="f">
+              <label>Coordenada Norte (UTM)</label>
+              <input id="fi-bot-norte" type="number" placeholder="Ej: 8916000">
+            </div>
+          </div>
+        </div>
+
+        <!-- RF-13 Compromisos Entidad -->
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+            Compromisos de la Entidad Solicitante — Acta de Compromisos
+            <span class="badge b-blue" style="font-size:9px">RF-13</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r)">
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="comp-comb" style="accent-color:var(--blue)"> Proveer combustible</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="comp-seg" style="accent-color:var(--blue)"> Proveer seguridad (24h)</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="comp-oper" style="accent-color:var(--blue)"> Proveer operadores</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="comp-movil" style="accent-color:var(--blue)"> Asumir movilización</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="comp-mant" style="accent-color:var(--blue)"> Asumir mantenimiento menor</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="comp-peaj" style="accent-color:var(--blue)"> Asumir peajes</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="comp-parq" style="accent-color:var(--blue)"> Lugar de parqueo</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="comp-perm" style="accent-color:var(--blue)"> Tramitar permisos (ANA, Provias)</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="comp-sup" style="accent-color:var(--blue)"> Designar supervisor técnico</label>
+          </div>
+          <div class="f" style="margin-top:10px">
+            <label>Coordinador designado por la Entidad</label>
+            <input id="fi-coord-entidad" placeholder="Nombre del coordinador designado por la Entidad Solicitante">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ASIGNACIÓN ACTIVOS ═══ -->
+<div id="v-act" style="display:none">
+  <div class="topbar"><div><div class="tb-t">ASIGNACIÓN DE ACTIVOS (PNC)</div><div class="tb-s">Relación de Intervenciones — Asignación</div></div><span class="tb-b">Inicio / Asignación de Activos</span></div>
+  <div class="toolbar"><button class="btn bw">Filtrar</button></div>
+  <div class="page">
+    <div class="fbar">
+      <div class="ff"><label>UBO</label><select><option>TODOS</option><option>ANCASH</option><option>PIURA</option></select></div>
+      <div class="ff"><label>Estado</label><select><option>TODOS</option><option>EJECUTADA</option><option>EN EJECUCIÓN</option></select></div>
+      <div class="ff"><label>Año</label><select><option>TODOS</option><option>2026</option><option>2025</option></select></div>
+    </div>
+    <div class="tw"><table class="dt"><thead>
+      <tr><th>Nro</th><th>UBO</th><th>Depto.</th><th>Ficha Técnica</th><th>Tipo</th><th>Estado</th><th>Descripción</th><th>Inicio</th><th>Término</th><th>CAS</th><th>Requerimientos</th><th>O/S</th><th>Opción</th></tr>
+    </thead><tbody>
+      <tr>
+        <td>1</td><td>ANCASH</td><td>ANCASH</td>
+        <td style="color:var(--orange);font-weight:600">002-2026-LDP-ANC</td>
+        <td><span class="badge b-blue">PREVENCIÓN</span></td>
+        <td><span class="badge b-green">EJECUTADA</span></td>
+        <td style="max-width:200px;font-size:11px">DESCOLMATACIÓN RIO SANTA — CATAC</td>
+        <td>09/01/2026</td><td>24/01/2026</td><td></td><td></td><td></td>
+        <td><button class="btn bp bsm" onclick="alert('Entrando a asignación de activos...')">Entrar</button></td>
+      </tr>
+    </tbody></table>
+    <div class="tf"><span>Mostrando 1 de 4 registros</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AVANCES ═══ -->
+<div id="v-avz" style="display:none">
+  <div class="topbar"><div><div class="tb-t">AVANCES</div><div class="tb-s">Relación de Intervenciones con Avances</div></div><span class="tb-b">Inicio / Avances</span></div>
+  <div class="page">
+    <div class="fbar">
+      <div class="ff"><label>UBO</label><select><option>TODOS</option></select></div>
+      <div class="ff"><label>Estado</label><select><option>TODOS</option><option>EN EJECUCIÓN</option><option>EJECUTADA</option></select></div>
+      <div class="ff"><label>Año</label><select><option>2026</option><option>2025</option><option>2024</option></select></div>
+    </div>
+    <div style="background:var(--red-l);border:1px solid #EF9A9A;border-radius:var(--r);padding:12px;margin-bottom:12px;font-size:12px;color:var(--red)">
+      ⚠️ <strong>Error PHP activo en producción:</strong> Undefined array key 0 en controllers/Avance_pnc.php línea 435 — Pendiente corrección con acceso al código fuente.
+    </div>
+    <div class="tw"><table class="dt"><thead>
+      <tr><th>Nro</th><th>UBO</th><th>Ficha Técnica</th><th>Descripción</th><th>Estado</th><th>Total Combustible (GAL)</th><th>Total Hora Máquina (H)</th><th>Opción</th></tr>
+    </thead><tbody>
+      <tr><td>1</td><td>PIURA</td><td style="color:var(--orange);font-weight:600">008-2026-LDP-PIU</td><td style="font-size:11px">LIMPIEZA RIO PIURA</td><td><span class="badge b-blue">EN EJECUCIÓN</span></td><td>2,100</td><td>87.5</td><td><button class="btn bp bsm" onclick="alert('Viendo avances...')">Entrar</button></td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- ═══ ASIGNACIÓN OPERADORES ═══ -->
+<div id="v-oper" style="display:none">
+  <div class="topbar"><div><div class="tb-t">ASIGNACIÓN DE OPERADORES (PNC)</div><div class="tb-s">Formulario para asignación de Operadores a la intervención</div></div><span class="tb-b">Inicio / Asig. Operadores</span></div>
+  <div class="page">
+    <div class="fbar">
+      <div class="ff"><label>UBO</label><select><option>TODOS</option><option>LA LIBERTAD</option></select></div>
+      <div class="ff"><label>Estado</label><select><option>TODOS</option></select></div>
+      <div class="ff"><label>Año</label><select><option>TODOS</option><option>2026</option></select></div>
+    </div>
+    <div class="tw"><table class="dt"><thead>
+      <tr><th>Nro</th><th>UBO</th><th>Ficha Técnica</th><th>Estado</th><th>Inicio</th><th>Término</th><th>Descripción</th><th>Opción</th></tr>
+    </thead><tbody>
+      <tr>
+        <td>1</td><td>LA LIBERTAD</td>
+        <td style="color:var(--orange);font-weight:600">017-2026-LD-P-LIB</td>
+        <td><span class="badge b-yellow">PROGRAMADA MARZO</span></td>
+        <td>30/03/2026</td><td>13/04/2026</td>
+        <td style="font-size:11px">LIMPIEZA RIO OLICHOCO — HUAMACHUCO</td>
+        <td><button class="btn bo bsm" onclick="abrirOperador()">Asignar Operador</button></td>
+      </tr>
+    </tbody></table>
+    <div class="tf"><span>Mostrando 1 de 1 registros</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONVENIOS ═══ -->
+<div id="v-conv" style="display:none">
+  <div class="topbar"><div><div class="tb-t">CONVENIOS PNC MAQUINARIAS</div><div class="tb-s" id="conv-sub">Registro de Convenios</div></div><span class="tb-b">Inicio / Convenios</span></div>
+  <div class="toolbar" id="conv-tb">
+    <button class="btn bg2" onclick="convNuevo()">+ Nuevo Convenio</button>
+    <button class="btn bw" onclick="alert('Exportando Excel...')">⬇ Excel</button>
+  </div>
+  <div id="conv-lista" class="page">
+    <div class="fbar">
+      <div class="ff"><label>UBO</label><select><option>TODOS</option><option>LIMA NORTE</option><option>PIURA</option><option>ANCASH</option><option>CUSCO</option></select></div>
+      <div class="ff"><label>Nivel Gobierno</label><select><option>TODOS</option><option>GOBIERNO CENTRAL</option><option>GOBIERNO REGIONAL</option><option>GOBIERNO PROVINCIAL</option><option>GOBIERNO DISTRITAL</option></select></div>
+      <div class="ff"><label>Región</label><select><option>TODOS</option></select></div>
+      <div class="ff"><label>Estado</label><select><option>TODOS</option><option>VIGENTE</option><option>CADUCO</option></select></div>
+    </div>
+    <div class="tw"><table class="dt"><thead>
+      <tr><th>Nro</th><th>UBO</th><th>Convenio</th><th>Nivel Gobierno</th><th>Región</th><th>Provincia</th><th>Distrito</th><th>Fecha Inicio</th><th>Fecha Fin</th><th>Estado</th><th>Observación</th><th>Editar</th><th>Eliminar</th></tr>
+    </thead><tbody>
+      <tr><td>001</td><td>LIMA NORTE</td><td><strong>0105-2025</strong></td><td>GOB. CENTRAL</td><td>LIMA</td><td>LIMA</td><td>CARABAYLLO</td><td>21/11/2025</td><td>21/11/2026</td><td><span class="badge b-green">VIGENTE</span></td><td>—</td><td><button class="btn bw bsm" onclick="convEditar(1)">✏️</button></td><td><button class="btn br bsm">🗑</button></td></tr>
+      <tr><td>002</td><td>PIURA</td><td><strong>0090-2023</strong></td><td>GOB. CENTRAL</td><td>PIURA</td><td>PIURA</td><td>PIURA</td><td>13/11/2023</td><td>12/11/2024</td><td><span class="badge b-red">CADUCO</span></td><td>SE ATENDIÓ CON HT 165910-2023.</td><td><button class="btn bw bsm" onclick="convEditar(2)">✏️</button></td><td><button class="btn br bsm">🗑</button></td></tr>
+      <tr><td>003</td><td>ANCASH</td><td><strong>0003-2022</strong> <span class="badge b-orange" style="font-size:9px">ADENDA 03</span></td><td>GOB. REGIONAL</td><td>ANCASH</td><td>RECUAY</td><td>CATAC</td><td>01/06/2022</td><td>31/12/2026</td><td><span class="badge b-green">VIGENTE</span></td><td>PLIA</td><td><button class="btn bw bsm" onclick="convEditar(3)">✏️</button></td><td><button class="btn br bsm">🗑</button></td></tr>
+    </tbody></table>
+    <div class="tf"><span>Mostrando 3 de 53 convenios</span></div>
+    </div>
+  </div>
+  <div id="conv-form" style="display:none" class="page">
+    <div class="card"><div class="ch" id="conv-form-tit">Registro de Convenios</div><div class="cb">
+      <div class="fg">
+        <div class="f"><label>Número de Convenio</label>
+          <div style="display:flex;gap:6px"><input id="cv-num" placeholder="Número" style="flex:1"><input id="cv-per" type="number" placeholder="2026" style="width:80px"></div>
+        </div>
+        <div class="f"><label>Adenda / UBO</label>
+          <div style="display:flex;align-items:center;gap:10px;padding:6px 0">
+            <label style="display:flex;align-items:center;gap:5px;font-size:12px"><input type="checkbox" id="cv-adenda" style="width:14px;height:14px"> Adenda</label>
+            <select id="cv-ubo" style="flex:1;padding:6px 9px;border:1px solid var(--bdr);border-radius:var(--r);font-size:12px;font-family:inherit">
+              <option value="">(Seleccione UBO)</option><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option><option>CUSCO</option><option>LA LIBERTAD</option>
+            </select>
+          </div>
+        </div>
+        <div class="f"><label>Nivel de Gobierno</label><select id="cv-nivel"><option value="">Seleccione...</option><option>GOBIERNO CENTRAL</option><option>GOBIERNO REGIONAL</option><option>GOBIERNO PROVINCIAL</option><option>GOBIERNO DISTRITAL</option></select></div>
+        <div class="f"><label>Entidad G.C.</label><select id="cv-entgc"><option value="">Seleccione...</option><option>SEDAPAL</option><option>MINISTERIO DE TRANSPORTES</option><option>MINISTERIO DE SALUD</option></select></div>
+        <div class="f"><label>Región</label><select id="cv-reg"><option value="">Seleccione...</option><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option><option>CUSCO</option></select></div>
+        <div class="f"><label>Provincia</label><select id="cv-prov"><option value="">Seleccione...</option></select></div>
+        <div class="f"><label>Distrito</label><select id="cv-dist"><option value="">Seleccione...</option></select></div>
+        <div></div>
+        <div class="f"><label>Fecha Inicio</label><input type="date" id="cv-fi"></div>
+        <div class="f"><label>Fecha Término</label><input type="date" id="cv-ft"></div>
+        <div class="f f2c"><label>Ubicación Archivo</label><textarea id="cv-arch" rows="2" placeholder="https://drive.google.com/..."></textarea></div>
+        <div class="f f2c"><label>Observación</label><textarea id="cv-obs" rows="3"></textarea></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn bo" onclick="convGuardar()">Guardar</button>
+        <button class="btn bw" onclick="convRegresar()">Cerrar</button>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ═══ REPORTES ═══ -->
+<div id="v-rpt" style="display:none">
+  <div class="topbar"><div><div class="tb-t">REPORTES — PNC MAQUINARIAS</div><div class="tb-s">Configurar Parámetros del Reporte</div></div><span class="tb-b">Inicio / Reportes PNC</span></div>
+  <div class="page">
+    <div class="card"><div class="ch">Parámetros</div><div class="cb"><div class="fg3">
+      <div class="f"><label>UBO</label><select><option value="">(Todos)</option><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option></select></div>
+      <div class="f"><label>Período</label><select><option>2024</option><option>2025</option><option selected>2026</option></select></div>
+      <div class="f"><label>Hasta (Distribución Maq.)</label><select><option>ENERO</option><option>FEBRERO</option><option selected>MARZO</option><option>ABRIL</option><option>MAYO</option><option>JUNIO</option></select></div>
+    </div></div></div>
+    <div class="card"><div class="ch">Reportes Disponibles</div><div class="cb">
+      <div class="rg">
+        <button class="rb rw" onclick="alert('Generando Documento Word...')">📄 Generar Documento</button>
+        <button class="rb re" onclick="alert('Generando Disponibilidad...')">📊 Disponibilidad de Maquinarias</button>
+        <button class="rb re" onclick="alert('Generando Distribución...')">📊 Distribución de Maquinarias</button>
+        <button class="rb re" onclick="alert('Generando Avance Intervenciones...')">📊 Avance de Intervenciones ▼</button>
+        <button class="rb rg2" onclick="alert('Generando Gantt...')">📅 Programación (Gantt)</button>
+        <button class="rb re" onclick="alert('Generando Formato 03...')">📊 Formato 03</button>
+        <button class="rb re" onclick="alert('Generando Formato 04...')">📊 Formato 04</button>
+        <button class="rb re" onclick="alert('Generando Anexo 10...')">📊 Anexo 10</button>
+        <button class="rb rg2" onclick="alert('Generando Programación General...')">📅 Programación General (Gantt)</button>
+        <button class="rb re" onclick="alert('Generando Descripción Maquinarias...')">📊 Descripción de Maquinarias ⭐</button>
+        <button class="rb rw" onclick="alert('Generando Ayuda Memoria...')">📄 Ayuda Memoria ⭐</button>
+      </div>
+      <div style="margin-top:10px;font-size:10px;color:var(--mut)">⭐ = Nuevos botones enviados a QA esta semana</div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ═══ PARTE DIARIO ═══ -->
+<div id="v-pd" style="display:none">
+  <div class="topbar"><div><div class="tb-t">PARTE DIARIO</div><div class="tb-s">Relación de Intervenciones con parte diario</div></div><span class="tb-b">Inicio / Parte Diario</span></div>
+  <div class="toolbar"><button class="btn bg2" onclick="alert('Generando Excel...')">⬇ Generar Excel</button></div>
+  <div class="page">
+    <div class="fbar">
+      <div class="ff"><label>UBO</label><select><option>SELECCIONE UNA OPCIÓN</option><option>PIURA</option><option>ANCASH</option></select></div>
+      <div class="ff"><label>Estado</label><select><option>SELECCIONE UNA OPCIÓN</option><option>EN EJECUCIÓN</option><option>EJECUTADA</option></select></div>
+      <div class="ff"><label>Año</label><select><option>SELECCIONE UNA OPCIÓN</option><option>2026</option><option>2025</option></select></div>
+    </div>
+    <div class="tw"><table class="dt"><thead>
+      <tr><th>Intervención</th><th>Ficha Técnica</th><th>Descripción</th><th>Estado</th><th>Total Combustible Abastecido (GAL)</th><th>Total Hora Máquina (H)</th><th>Opción</th></tr>
+    </thead><tbody>
+      <tr>
+        <td>Ninguno</td><td>Ninguno</td><td>Ninguno</td><td>Ninguno</td><td>Ninguno</td><td>Ninguno</td><td>Ninguno</td>
+      </tr>
+    </tbody></table>
+    <div class="tf"><span>Mostrando registros del 1 al 1 de un total de 1 registros</span>
+      <div style="display:flex;gap:4px"><button class="btn bw bsm">Anterior</button><button class="btn bp bsm">1</button><button class="btn bw bsm">Siguiente</button></div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONTRATOS CAS ═══ -->
+<div id="v-cas" style="display:none">
+  <div class="topbar"><div><div class="tb-t">CONTRATO CAS (PNC Maquinarias)</div><div class="tb-s" id="cas-sub">Listado de Contratos CAS</div></div><span class="tb-b">Inicio / Contrato CAS</span></div>
+  <div class="toolbar" id="cas-tb"><button class="btn bg2" onclick="casNuevo()">+ Agregar</button></div>
+  <div id="cas-lista" class="page">
+    <div class="tw"><table class="dt"><thead>
+      <tr><th>N° Contrato</th><th>Período</th><th>Sede</th><th>UBO</th><th>Trabajador</th><th>DNI</th><th>Cargo/Función</th><th>Fecha Inicio</th><th>Fecha Fin</th><th>Monto</th><th>Estado</th><th>Opción</th></tr>
+    </thead><tbody>
+      <tr><td colspan="12" style="text-align:center;color:var(--mut);padding:20px">Sin contratos registrados</td></tr>
+    </tbody></table></div>
+  </div>
+  <div id="cas-form" style="display:none" class="page">
+    <div class="card"><div class="ch">CONTRATO CAS (PNC Maquinarias)</div><div class="cb">
+      <div class="fg" style="margin-bottom:14px">
+        <div class="f"><label>Número de Contrato</label>
+          <div style="display:flex;gap:4px;align-items:center">
+            <input placeholder="Número" style="flex:1;padding:6px 9px;border:1px solid var(--bdr);border-radius:var(--r);font-size:12px">
+            <span style="font-size:12px;color:var(--mut)">-</span>
+            <input value="2026" style="width:70px;padding:6px 9px;border:1px solid var(--bdr);border-radius:var(--r);font-size:12px">
+            <span style="font-size:12px;color:var(--mut)">/VIVIENDA-OGGRH</span>
+          </div>
+        </div>
+        <div class="f"><label>ESTADO:</label><input readonly style="background:var(--surf)"></div>
+        <div class="f"><label>Tipo Sede</label>
+          <div style="display:flex;gap:14px;padding:6px 0">
+            <label style="display:flex;align-items:center;gap:5px;font-size:12px"><input type="radio" name="sede" value="SC"> SEDE CENTRAL</label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:12px"><input type="radio" name="sede" value="UBO" checked> UBO</label>
+          </div>
+        </div>
+        <div class="f"><label>UBO</label><select><option value="">(Seleccione una opción)</option><option>AMAZONAS</option><option>ANCASH</option><option>PIURA</option></select></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">DATOS DEL TRABAJADOR</div>
+      <div class="fg" style="margin-bottom:14px">
+        <div class="f"><label>DNI</label>
+          <div style="display:flex;gap:6px"><input id="cas-dni" placeholder="DNI" style="flex:1;padding:6px 9px;border:1px solid var(--bdr);border-radius:var(--r);font-size:12px"><button class="btn bp bsm">🔍</button></div>
+        </div>
+        <div></div>
+        <div class="f"><label>Nombres</label><input id="cas-nom" style="background:var(--surf)" readonly></div>
+        <div class="f"><label>Apellido Paterno</label><input id="cas-apat" style="background:var(--surf)" readonly></div>
+        <div class="f"><label>Apellido Materno</label><input id="cas-amat" style="background:var(--surf)" readonly></div>
+        <div class="f"><label>Fecha Nacimiento</label><input type="date" style="background:var(--surf)" readonly></div>
+        <div class="f"><label>Título (Abrev.)</label><input placeholder="Ej: Ing., Lic."></div>
+        <div class="f"><label>Celular 1</label><input type="tel"></div>
+        <div class="f"><label>Celular 2</label><input type="tel"></div>
+        <div></div>
+        <div class="f"><label>Correo electrónico Institucional</label><input type="email"></div>
+        <div class="f"><label>Correo electrónico Personal</label><input type="email"></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">DATOS DEL CONTRATO</div>
+      <div class="fg" style="margin-bottom:14px">
+        <div class="f"><label>Fecha Inicio</label><input type="date"></div>
+        <div class="f"><label>Fecha Final</label><input type="date"></div>
+        <div class="f"><label>Plazo</label><input type="number" readonly style="background:var(--surf)"></div>
+        <div class="f"><label>Cargo/Función</label><select><option value="">(Seleccione una opción)</option><option>COORDINADOR ZONAL</option><option>OPERADOR DE MAQUINARIA</option><option>CHOFER</option><option>MECÁNICO</option><option>SUPERVISOR</option></select></div>
+        <div class="f"><label>Monto Mensual</label><input type="number" value="0.00"></div>
+        <div class="f"><label>Archivo Adjunto</label><input type="text" placeholder="URL del contrato..."></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)">DATOS DE ADENDAS <button class="btn bp bsm" style="margin-left:10px" onclick="alert('Agregar adenda...')">+ Agregar Adenda</button></div>
+      <div class="tw"><table class="dt"><thead><tr><th>Nro Adenda</th><th>Período</th><th>Fecha Inicio</th><th>Fecha Fin</th><th>Plazo</th><th>Archivo Adjunto</th><th>Opción</th></tr></thead>
+        <tbody><tr><td colspan="7" style="text-align:center;color:var(--mut);padding:16px">Sin adendas</td></tr></tbody>
+      </table></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn bo" onclick="alert('Grabando...')">💾 Grabar</button>
+        <button class="btn br" onclick="casRegresar()">↩ Regresar</button>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL OT ═══ -->
+<div id="ov-ot" class="ov" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="mh"><span class="mt2">ORDEN DE TRABAJO - MANTENIMIENTO DE MAQUINARIAS (PNC)<br><small style="font-weight:400;font-size:11px">CODIGO GEOVIVIENDA: EGV-820 — UBO: TUMBES — Flota: VEHÍCULO — Tipo Unidad: VOLQUETE</small></span><button class="xb" onclick="document.getElementById('ov-ot').style.display='none'">✕</button></div>
+    <div class="mb">
+      <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:10px">I. ORDEN DE TRABAJO <span style="margin-left:20px;color:var(--orange)">Nro: 000001-2017</span> <span style="margin-left:20px;color:var(--blue)">CERRADO</span></div>
+      <div class="fg">
+        <div class="f f2c"><label>Título</label><input value="MANTENIMIENTO PREVENTIVO TIPO PM3 CICLO 4"></div>
+        <div class="f"><label>Fecha</label><input type="date" value="2017-03-07"></div>
+        <div class="f"><label>Prioridad</label><select><option selected>MEDIA</option><option>ALTA</option><option>BAJA</option></select></div>
+        <div class="f"><label>Tipo OT</label><select><option selected>MANTENIMIENTO PREVENTIVO</option><option>MANTENIMIENTO CORRECTIVO</option></select></div>
+        <div class="f"><label>Tipo PM</label><select><option>PM1</option><option>PM2</option><option selected>PM3</option></select></div>
+        <div class="f"><label>Ciclo</label><select><option>1</option><option>2</option><option>3</option><option selected>4</option></select></div>
+        <div class="f"><label>Horometro</label><input value="1651"></div>
+        <div class="f"><label>Odometro</label><input value=""></div>
+        <div class="f"><label>Solicitante</label><select><option selected>COORDINADOR</option><option>OPERADOR</option></select></div>
+        <div class="f"><label>Guardar</label><button class="btn bo">Guardar</button></div>
+      </div>
+      <div style="margin-top:14px">
+        <button class="btn bg2 bsm" onclick="alert('Agregar backlog a esta OT...')">+ Agregar BackLog</button>
+        <div class="tw" style="margin-top:8px"><table class="dt"><thead><tr><th>Fecha</th><th>Descripción</th><th>Reportado Por</th></tr></thead>
+          <tbody><tr><td colspan="3" style="text-align:center;color:var(--mut);padding:12px">No data available in table</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL BACKLOG ═══ -->
+<div id="ov-blg" class="ov" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" style="max-width:700px">
+    <div class="mh"><span class="mt2">Registro de Requerimientos - Backlog</span><button class="xb" onclick="document.getElementById('ov-blg').style.display='none'">✕</button></div>
+    <div class="mb">
+      <div class="fg">
+        <div class="f"><label>Fecha</label><input type="date" value="2026-03-28"></div>
+        <div class="f"><label>Codigo Geovivienda</label><input placeholder="Ej: EGM-788"></div>
+        <div class="f"><label>UBO</label><input readonly style="background:var(--surf)"></div>
+        <div class="f"><label>Región</label><input readonly style="background:var(--surf)"></div>
+        <div class="f"><label>Tipo Unidad</label><input readonly style="background:var(--surf)"></div>
+        <div class="f"><label>Marca</label><input readonly style="background:var(--surf)"></div>
+        <div class="f f2c"><label>Reportado por</label><select><option value="">SELECCIONE UNA OPCION</option><option>Carlos Mendoza</option><option>Rosa Vilchez</option></select></div>
+        <div class="f f2c"><label>Descripción - Backlog</label><textarea rows="4"></textarea></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bo" onclick="alert('Guardado.');document.getElementById('ov-blg').style.display='none'">Guardar</button><button class="btn bw" onclick="document.getElementById('ov-blg').style.display='none'">Cerrar</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL OPERADOR ═══ -->
+<div id="ov-oper" class="ov" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal">
+    <div class="mh"><span class="mt2">ASIGNACION DE OPERADORES (PNC)<br><small style="font-weight:400;font-size:11px">Formulario para asignación de Operadores a la intervención</small></span><button class="xb" onclick="document.getElementById('ov-oper').style.display='none'">✕</button></div>
+    <div class="mb">
+      <div class="fg3" style="margin-bottom:14px">
+        <div class="f"><label>UBO</label><input value="LA LIBERTAD" readonly style="background:var(--surf)"></div>
+        <div class="f"><label>Ficha Técnica</label><input value="017-2026-LD-P-LIB" readonly style="background:var(--surf)"></div>
+        <div class="f"><label>Estado</label><input value="PROGRAMADA MARZO" readonly style="background:var(--surf)"></div>
+        <div class="f"><label>Plazo</label><input value="15" readonly style="background:var(--surf)"></div>
+        <div class="f"><label>Inicio</label><input value="30/03/2026" readonly style="background:var(--surf)"></div>
+        <div class="f"><label>Término</label><input value="13/04/2026" readonly style="background:var(--surf)"></div>
+        <div class="f f2c"><label>Descripción</label><textarea rows="2" readonly style="background:var(--surf)">LIMPIEZA, DESCOLMATACION Y CONFORMACION DE DIQUE CON MATERIAL PROPIO EN EL RIO OLICHOCO, SECTOR PUENTE COLGANTE YANASARA</textarea></div>
+      </div>
+      <div class="ao-box">
+        <div class="ao-t">Asignar Operador CAS</div>
+        <div class="fg">
+          <div class="f"><label>Operador</label><select><option value="">Seleccione una opción</option><option>Carlos Mendoza</option><option>Rosa Vilchez</option><option>Pedro Quispe</option></select></div>
+          <div class="f"><label>Plazo</label><input type="number" value="15"></div>
+          <div class="f"><label>Maquinaria</label><input placeholder="Código maquinaria"></div>
+          <div class="f"><label>Tipo</label><input readonly style="background:var(--surf)"></div>
+          <div class="f"><label>Marca</label><input readonly style="background:var(--surf)"></div>
+          <div class="f"><label>Modelo</label><input readonly style="background:var(--surf)"></div>
+        </div>
+        <div class="ao-links">
+          <span class="ao-lnk">Contratación de Servicios O/S</span>
+        </div>
+      </div>
+      <div class="tw"><table class="dt"><thead><tr><th>Nro.</th><th>Operador</th><th>Función</th><th>Plazo</th><th>Maquinaria</th><th>Opción</th></tr></thead>
+        <tbody><tr><td colspan="6" style="text-align:center;color:var(--mut);padding:14px">No data available in table</td></tr></tbody>
+      </table></div>
+    </div>
+    <div class="mf"><button class="btn bo" onclick="alert('Operador asignado.');document.getElementById('ov-oper').style.display='none'">Guardar</button><button class="btn bw" onclick="document.getElementById('ov-oper').style.display='none'">Cerrar</button></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ═══ DATA ═══
+const MAQ_DATA = [
+  {id:1,cod:'EGM-788',ubo:'AMAZONAS',reg:'AMAZONAS',flota:'VEHÍCULO',tipo:'VOLQUETE',marca:'MERCEDES BENZ',modelo:'ACTROS 3344K',est:'OPERATIVO',cond:'BUENO',km:45646.8,horo:3831,fecha:'26/03/2026'},
+  {id:2,cod:'EGV-820',ubo:'TUMBES',reg:'TUMBES',flota:'VEHÍCULO',tipo:'VOLQUETE',marca:'HINO',modelo:'FM8JLS',est:'OPERATIVO',cond:'BUENO',km:28430,horo:0,fecha:'26/03/2026'},
+  {id:3,cod:'PNC-001',ubo:'ANCASH',reg:'ANCASH',flota:'MAQUINARIA',tipo:'MOTONIVELADORA',marca:'CATERPILLAR',modelo:'140K',est:'OPERATIVO',cond:'BUENO',km:0,horo:4250,fecha:'26/03/2026'},
+  {id:4,cod:'PNC-002',ubo:'PIURA',reg:'PIURA',flota:'MAQUINARIA',tipo:'EXCAVADORA',marca:'KOMATSU',modelo:'PC220LC',est:'OPERATIVO',cond:'BUENO',km:0,horo:3180,fecha:'26/03/2026'},
+  {id:5,cod:'PNC-003',ubo:'CUSCO',reg:'CUSCO',flota:'MAQUINARIA',tipo:'RODILLO COMPACT.',marca:'DYNAPAC',modelo:'CA250D',est:'EN MANTENIMIENTO',cond:'REGULAR',km:0,horo:6800,fecha:'05/03/2026'},
+  {id:6,cod:'PNC-004',ubo:'LIMA NORTE',reg:'LIMA',flota:'VEHÍCULO',tipo:'CAMIONETA 4X4',marca:'TOYOTA',modelo:'HILUX',est:'OPERATIVO',cond:'BUENO',km:48200,horo:0,fecha:'26/03/2026'},
+  {id:7,cod:'PNC-005',ubo:'LORETO',reg:'LORETO',flota:'MAQUINARIA',tipo:'CARGADOR FRONTAL',marca:'CATERPILLAR',modelo:'950H',est:'INOPERATIVO',cond:'MALO',km:0,horo:9400,fecha:'10/03/2026'},
+];
+const MAQ_HIST = [
+  {nro:'001',activo:true,fecha:'26/03/2026',ubo:'AMAZONAS',reg:'AMAZONAS',est:'OPERATIVO',ini:'',km:45646.8,horo:3831,com:'ZONA DE PARQUEO DE LA UBO AMAZONAS'},
+  {nro:'002',activo:false,fecha:'19/03/2026',ubo:'AMAZONAS',reg:'AMAZONAS',est:'OPERATIVO',ini:'',km:45646.8,horo:3831,com:'ZONA DE PARQUEO DE LA UBO AMAZONAS'},
+  {nro:'003',activo:false,fecha:'13/03/2026',ubo:'AMAZONAS',reg:'AMAZONAS',est:'INOPERATIVO',ini:'2025-11-06',km:45646.6,horo:3826,com:'PRESENTA FALLA ACCESORIOS DE LA CAJA DE DIRECCION (EJE SINFIN)'},
+];
+
+const INT_DATA = [
+  {id:1,num:'00008',ubo:'ANCASH',depto:'ANCASH',tipo:'PREVENCIÓN',est:'EJECUTADA',ficha:'002-2026-LDP-ANC',desc:'DESCOLMATACIÓN Y REFORZAMIENTO DE DIQUE RIO SANTA — CATAC',fini:'09/01/2026',fterm:'24/01/2026',m3:8550,km:0.6,per:2026},
+  {id:2,num:'00001',ubo:'AMAZONAS',depto:'AMAZONAS',tipo:'PREVENCIÓN',est:'PROGRAMADA JUNIO',ficha:'N°012-2026-LDP-AMZ',desc:'LIMPIEZA Y DESCOLMATACIÓN QUEBRADA C.P. GONCHA',fini:'01/03/2026',fterm:'14/03/2026',m3:11850,km:1.891,per:2026},
+  {id:3,num:'00002',ubo:'PIURA',depto:'PIURA',tipo:'EMERGENCIA',est:'EN EJECUCIÓN',ficha:'N°008-2026-LDP-PIU',desc:'LIMPIEZA Y DESCOLMATACIÓN RIO PIURA — AV. GRAU KM 5',fini:'01/02/2026',fterm:'03/03/2026',m3:18000,km:2.5,per:2026},
+  {id:4,num:'00003',ubo:'LA LIBERTAD',depto:'LA LIBERTAD',tipo:'PREVENCIÓN',est:'PROGRAMADA MARZO',ficha:'017-2026-LD-P-LIB',desc:'LIMPIEZA DESCOLMATACION DIQUE RIO OLICHOCO — HUAMACHUCO',fini:'30/03/2026',fterm:'13/04/2026',m3:9500,km:1.2,per:2026},
+  {id:5,num:'00005',ubo:'LORETO',depto:'LORETO',tipo:'EMERGENCIA',est:'DESESTIMADA',ficha:'N°020-2026-LDP-LOR',desc:'LIMPIEZA RIO ITAYA — IQUITOS',fini:'',fterm:'',m3:10500,km:1.5,per:2026},
+];
+
+const MARCOS = {
+  PREVENCIÓN:{default:['CONVENIO N°003-2022-ADENDA 03 / PLIA','CONVENIO N°46-2023-VIVIENDA/VMVU/PNC','CONVENIO N°47-2023','CONVENIO N°50-2024','CONVENIO N°55-2025'],AMAZONAS:['CONVENIO N°46-2023 — AMAZONAS','ADENDA N°01 — CONV.N°46-2023'],ANCASH:['CONVENIO N°003-2022-ADENDA 03 / PLIA','CONVENIO N°52-2024 — ANCASH'],PIURA:['CONVENIO N°47-2023 — PIURA','CONVENIO N°55-2025 — PIURA']},
+  EMERGENCIA:{default:['D.S. N°023-2023-PCM','D.S. N°031-2023-PCM','D.S. N°015-2024-PCM','D.S. N°008-2025-PCM'],PIURA:['D.S. N°015-2024-PCM — Piura','D.S. N°019-2024-PCM — Río Chira'],LORETO:['D.S. N°022-2024-PCM — Loreto','D.S. N°029-2024-PCM — Inundaciones']},
+  URGENCIA:{default:['ACUERDO DE CONCEJO N°001-2023','ACUERDO DE CONCEJO N°015-2023','ACUERDO DE CONCEJO N°022-2024'],ANCASH:['ACUERDO DE CONCEJO N°003-2023 — CATAC'],CUSCO:['ACUERDO DE CONCEJO N°022-2024 — MDW']}
+};
+
+const UTM = {17:{eMin:166000,eMax:834000,nMin:8400000,nMax:10000000},18:{eMin:166000,eMax:834000,nMin:7600000,nMax:9000000},19:{eMin:166000,eMax:500000,nMin:7550000,nMax:8200000}};
+let zona=18, editIntId=null;
+
+// ═══ NAV ═══
+function go(m){
+  ['dash','maq','ot','blg','seg','pm','int','act','avz','oper','conv','rpt','pd','cas'].forEach(v=>{
+    const el=document.getElementById('v-'+v);
+    if(el) el.style.display=(v===m)?'flex':'none';
+    if(el&&v===m) el.style.flexDirection='column';
+  });
+  document.querySelectorAll('.sbi').forEach(i=>i.classList.remove('on'));
+  const n=document.getElementById('nav-'+m);
+  if(n) n.classList.add('on');
+  if(m==='maq') renderMaq();
+  if(m==='int') renderInt();
+}
+
+// ═══ MAQUINARIAS ═══
+function maqBadge(e){return e==='OPERATIVO'?'b-green':e==='INOPERATIVO'?'b-red':'b-orange'}
+function renderMaq(){
+  const tb=document.getElementById('maq-body');
+  tb.innerHTML=MAQ_DATA.map((m,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td style="color:var(--orange);font-weight:600">${m.cod}</td>
+      <td>${m.ubo}</td><td>${m.reg}</td>
+      <td><span class="badge ${m.flota==='MAQUINARIA'?'b-blue':'b-gray'}">${m.flota}</span></td>
+      <td>${m.tipo}</td><td>${m.marca}</td><td>${m.modelo}</td>
+      <td><span class="badge ${maqBadge(m.est)}">${m.est}</span></td>
+      <td>${m.flota==='VEHÍCULO'?(m.km.toLocaleString()+' km'):'—'}</td>
+      <td>${m.flota==='MAQUINARIA'?(m.horo.toLocaleString()+' h'):'—'}</td>
+      <td>${m.fecha}</td>
+      <td><button class="btn bo bsm" onclick="abrirMaqForm(${m.id})">Modificar</button></td>
+    </tr>`).join('');
+  document.getElementById('maq-cnt').textContent=`Mostrando ${MAQ_DATA.length} de ${MAQ_DATA.length} registros`;
+}
+function maqF(){renderMaq()}
+function abrirMaqForm(id){
+  const m=MAQ_DATA.find(x=>x.id===id);
+  document.getElementById('maq-lista').style.display='none';
+  document.getElementById('maq-form').style.display='block';
+  document.getElementById('maq-sub').textContent='Modificar Estado';
+  document.getElementById('maq-form-titulo').textContent=`CODIGO GEOVIVIENDA: ${m.cod} — Flota: ${m.flota} — Tipo Unidad: ${m.tipo}`;
+  document.getElementById('maq-tb').innerHTML=`<button class="btn br" onclick="maqRegresar()">↩ Regresar</button>`;
+  // Render hist
+  document.getElementById('maq-hist').innerHTML=MAQ_HIST.map((h,i)=>`
+    <tr>
+      <td>${h.nro}</td>
+      <td>${h.activo?'<span style="color:red;font-size:16px">●</span>':''}</td>
+      <td>${h.fecha}</td><td>${h.ubo}</td><td>${h.reg}</td>
+      <td>${h.est}</td><td>${h.ini}</td>
+      <td>${h.km}</td><td>${h.horo}</td>
+      <td style="font-size:11px">${h.com}</td>
+      <td></td>
+    </tr>`).join('');
+}
+function maqRegresar(){
+  document.getElementById('maq-lista').style.display='block';
+  document.getElementById('maq-form').style.display='none';
+  document.getElementById('maq-sub').textContent='Relación de Maquinarias PNC';
+  document.getElementById('maq-tb').innerHTML=`<button class="btn bg2" onclick="alert('Generando Reporte...')">⬇ Reporte Estado Actual</button>`;
+}
+function maqGuardar(){alert('✅ Estado de maquinaria actualizado correctamente.');maqRegresar();}
+
+// ═══ INTERVENCIONES ═══
+function intBadge(e){if(e==='EJECUTADA')return 'b-green';if(e==='EN EJECUCIÓN')return 'b-blue';if(e==='DESESTIMADA')return 'b-red';if(e==='PARALIZADA')return 'b-orange';return 'b-gray';}
+function renderInt(){
+  const ubo=document.getElementById('if-ubo')?.value||'TODOS';
+  const est=document.getElementById('if-est')?.value||'TODOS';
+  const per=document.getElementById('if-per')?.value||'TODOS';
+  const q=(document.getElementById('if-q')?.value||'').toLowerCase();
+  const f=INT_DATA.filter(i=>(ubo==='TODOS'||i.ubo===ubo)&&(est==='TODOS'||i.est===est)&&(per==='TODOS'||String(i.per)===per)&&(!q||JSON.stringify(i).toLowerCase().includes(q)));
+  const tb=document.getElementById('int-body');
+  tb.innerHTML=f.map((i,idx)=>`
+    <tr>
+      <td>${idx+1}</td>
+      <td style="font-weight:600">${i.num}</td>
+      <td>${i.ubo}</td><td>${i.depto}</td>
+      <td><span class="badge b-blue">${i.tipo}</span></td>
+      <td><span class="badge ${intBadge(i.est)}">${i.est}</span></td>
+      <td style="color:var(--orange);font-weight:600">${i.ficha}</td>
+      <td style="font-size:11px;max-width:180px">${i.desc}</td>
+      <td>${i.fini||'—'}</td><td>${i.fterm||'—'}</td>
+      <td>${i.m3?.toLocaleString()}</td><td>${i.km}</td>
+      <td>
+        <button class="btn bp bsm" style="background:#17a2b8" onclick="intEditar(${i.id})" title="Ver/Editar">ℹ</button>
+        <button class="btn br bsm" onclick="if(confirm('¿Eliminar?')){INT_DATA.splice(INT_DATA.findIndex(x=>x.id===${i.id}),1);renderInt();}">🗑</button>
+      </td>
+    </tr>`).join('')||'<tr><td colspan="13" style="text-align:center;color:var(--mut);padding:20px">Sin registros</td></tr>';
+  document.getElementById('int-cnt').textContent=`Mostrando ${f.length} de ${INT_DATA.length} registros`;
+}
+function intF(){renderInt()}
+function intShowForm(){
+  document.getElementById('int-lista').style.display='none';
+  document.getElementById('int-form').style.display='block';
+  document.getElementById('int-form').style.flex='1';
+  document.getElementById('int-form').style.overflowY='auto';
+  document.getElementById('int-sub').textContent=editIntId?'Editar Intervención':'Nueva Intervención';
+  document.getElementById('int-bread').textContent='Inicio / Intervención / Formulario';
+  document.getElementById('int-tb').innerHTML=`
+    <button class="btn bo" onclick="intGuardar()">💾 Grabar</button>
+    <button class="btn br" onclick="intRegresar()">↩ Regresar</button>
+    <span style="margin-left:12px;font-size:11px;color:var(--mut)">↕ Desplace hacia abajo para ver todos los campos</span>`;
+}
+function intNueva(){
+  editIntId=null;
+  document.getElementById('fi-num').value=`0000${INT_DATA.length+1}`;
+  ['fi-ubo','fi-tipo','fi-marco','fi-depto','fi-prov','fi-dist','fi-sect','fi-ficha','fi-link','fi-sup','fi-act','fi-mcontrat','fi-mejec','fi-km','fi-m3','fi-pob','fi-estficha','fi-estint','fi-comb','fi-plazo','fi-fini','fi-fterm','fi-ie','fi-in','fi-fe','fi-fn','fi-linf','fi-ht','fi-entid','fi-sfunc','fi-pgas','fi-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['fi-fen','fi-plia','fi-ppcc','fi-entidad'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
+  document.getElementById('fi-cbox').style.display='none';
+  document.getElementById('fi-cbox').innerHTML='';
+  document.getElementById('fi-dist-box').style.display='none';
+  ['v-ie','v-in','v-fe','v-fn'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  // Reset nuevos campos RF-05 al RF-13
+  ['fi-sinpad','fi-ubigeo','fi-croquis','fi-galeria','fi-botadero','fi-bot-dist','fi-bot-este','fi-bot-norte','fi-coord-entidad'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const fv=document.getElementById('fi-viab'); if(fv)fv.value='';
+  const fva=document.getElementById('fi-viab-alert'); if(fva)fva.style.display='none';
+  ['comp-comb','comp-seg','comp-oper','comp-movil','comp-mant','comp-peaj','comp-parq','comp-perm','comp-sup'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
+  maqReqRows=[];
+  const mrb=document.getElementById('maq-req-body');
+  if(mrb){mrb.innerHTML='<tr id="maq-req-empty"><td colspan="9" style="text-align:center;color:var(--mut);padding:14px;font-size:11px">Haga clic en "+ Agregar Unidad" para registrar la maquinaria requerida</td></tr>';}
+  intShowForm();
+}
+function intEditar(id){
+  editIntId=id;
+  const i=INT_DATA.find(x=>x.id===id);
+  if(!i)return;
+  document.getElementById('fi-num').value=i.num;
+  document.getElementById('fi-ubo').value=i.ubo;
+  document.getElementById('fi-depto').value=i.depto;
+  document.getElementById('fi-estint').value=i.est;
+  document.getElementById('fi-ficha').value=i.ficha;
+  document.getElementById('fi-desc').value=i.desc;
+  document.getElementById('fi-fini').value=i.fini;
+  document.getElementById('fi-fterm').value=i.fterm;
+  document.getElementById('fi-km').value=i.km;
+  document.getElementById('fi-m3').value=i.m3;
+  document.getElementById('fi-cbox').style.display='none';
+  document.getElementById('fi-cbox').innerHTML='';
+  intShowForm();
+}
+function intRegresar(){
+  document.getElementById('int-lista').style.display='block';
+  document.getElementById('int-form').style.display='none';
+  document.getElementById('int-form').style.flex='';
+  document.getElementById('int-form').style.overflowY='';
+  document.getElementById('int-sub').textContent='Relación de Intervenciones';
+  document.getElementById('int-bread').textContent='Inicio / Intervención';
+  document.getElementById('int-tb').innerHTML=`<button class="btn bg2" onclick="intNueva()">+ Nueva</button><button class="btn bw" onclick="alert('Generando Excel...')">⬇ Generar Excel</button>`;
+  renderInt();
+}
+function intGuardar(){
+  const ta=document.querySelector('#fi-cbox textarea');
+  if(ta&&!ta.value.trim()){ta.style.borderColor='var(--red)';ta.focus();alert('⚠️ El comentario de cambio de estado es obligatorio.');return;}
+  alert('✅ Intervención guardada correctamente.');
+  intRegresar();
+}
+
+// Marco legal dinámico
+function cargaMarcos(){
+  const tipo=document.getElementById('fi-tipo')?.value;
+  const depto=document.getElementById('fi-depto')?.value;
+  const sel=document.getElementById('fi-marco');
+  const info=document.getElementById('fi-marco-info');
+  if(!tipo){sel.innerHTML='<option value="">— Seleccione Tipo primero —</option>';info.style.display='none';return;}
+  sel.innerHTML='<option value="">Cargando...</option>';
+  sel.disabled=true;
+  setTimeout(()=>{
+    const cat=MARCOS[tipo]||{};
+    const lista=(depto&&cat[depto])?cat[depto]:cat.default||[];
+    const label=tipo==='PREVENCIÓN'?'Convenio':tipo==='EMERGENCIA'?'Decreto Supremo':'Acuerdo de Concejo';
+    sel.innerHTML=`<option value="">(Seleccione ${label})</option>`+lista.map(m=>`<option>${m}</option>`).join('');
+    sel.disabled=false;
+    info.style.display='block';
+    info.textContent=`✓ ${lista.length} registros para ${tipo}${depto?' — '+depto:''}`;
+  },400);
+}
+
+// Estado + comentario obligatorio
+function onEstado(){
+  const val=document.getElementById('fi-estint').value;
+  const box=document.getElementById('fi-cbox');
+  if(!val){box.style.display='none';box.innerHTML='';return;}
+  const isDes=val==='DESESTIMADA';
+  const lbl=isDes?'Motivo de desestimación':val==='PARALIZADA'?'Motivo de paralización':val==='EJECUTADA'?'Comentario de cierre':'Motivo del cambio de estado';
+  box.className='cbox '+(isDes?'cbox-d':'cbox-w');
+  box.style.display='block';
+  box.innerHTML=`<label>ℹ ${lbl} <span class="req">*</span></label>
+    <textarea rows="3" maxlength="500" placeholder="${isDes?'Describa el motivo...':'Escriba el motivo del cambio de estado...'}"
+      style="width:100%;border:1px solid var(--bdr);border-radius:var(--r);padding:7px;font-family:inherit;font-size:12px"
+      oninput="document.getElementById('cc-est').textContent=this.value.length"></textarea>
+    <div class="char-c"><span id="cc-est">0</span>/500</div>`;
+  box.querySelector('textarea').focus();
+}
+
+// UTM validation
+function selZ(z){
+  zona=z;[17,18,19].forEach(n=>{document.getElementById('z'+n).className='utm-c'+(n===z?' sel':'');});
+  ['ie','in','fe','fn'].forEach(c=>valC(c));
+}
+function valC(f){
+  const el=document.getElementById('fi-'+f);
+  const vEl=document.getElementById('v-'+f);
+  if(!el||!vEl)return;
+  const v=parseFloat(el.value);
+  if(!v||isNaN(v)){vEl.innerHTML='';return;}
+  const z=UTM[zona];
+  const isE=f.includes('e');
+  const ok=isE?(v>=z.eMin&&v<=z.eMax):(v>=z.nMin&&v<=z.nMax);
+  vEl.innerHTML=ok?`<span class="c-ok">✓ Válido Zona ${zona}S</span>`:`<span class="c-err">✗ Fuera de rango Zona ${zona}S</span>`;
+  calcDist();
+}
+function calcDist(){
+  const ie=parseFloat(document.getElementById('fi-ie')?.value||0);
+  const in_=parseFloat(document.getElementById('fi-in')?.value||0);
+  const fe=parseFloat(document.getElementById('fi-fe')?.value||0);
+  const fn=parseFloat(document.getElementById('fi-fn')?.value||0);
+  const db=document.getElementById('fi-dist-box');
+  if(!db)return;
+  if(ie&&in_&&fe&&fn){
+    const d=(Math.sqrt(Math.pow(fe-ie,2)+Math.pow(fn-in_,2))/1000).toFixed(3);
+    db.style.display='block';
+    db.innerHTML=`📍 Distancia calculada: <strong>${d} km</strong> — Zona ${zona}S (WGS84)`;
+  }else{db.style.display='none';}
+}
+
+// ═══ NUEVOS CAMPOS RF-05 AL RF-13 ═══
+
+// RF-10: Viabilidad
+function onViabilidad(){
+  const val=document.getElementById('fi-viab').value;
+  const al=document.getElementById('fi-viab-alert');
+  if(al) al.style.display=val==='NO'?'block':'none';
+}
+
+// RF-06: Tabla maquinaria requerida
+let maqReqRows=[];
+const TIPOS_MAQ=['MOTONIVELADORA','EXCAVADORA HIDRÁULICA','CARGADOR FRONTAL','TRACTOR SOBRE ORUGA','RODILLO COMPACTADOR','RETROEXCAVADORA','MINICARGADOR','VOLQUETE','CAMIONETA 4X4','CAMIÓN CISTERNA'];
+
+function agregarMaqReq(){
+  const id=Date.now();
+  maqReqRows.push(id);
+  const empty=document.getElementById('maq-req-empty');
+  if(empty) empty.style.display='none';
+  const tbody=document.getElementById('maq-req-body');
+  const tr=document.createElement('tr');
+  tr.id='mr-'+id;
+  tr.innerHTML=`
+    <td style="font-weight:600;color:var(--blue)">${maqReqRows.length}</td>
+    <td><select style="width:100%;padding:4px 6px;border:1px solid var(--bdr);border-radius:4px;font-size:11px;font-family:inherit">
+      <option value="">Seleccione...</option>
+      ${TIPOS_MAQ.map(t=>`<option>${t}</option>`).join('')}
+    </select></td>
+    <td><input placeholder="Marca / Modelo" style="width:100%;padding:4px 6px;border:1px solid var(--bdr);border-radius:4px;font-size:11px;font-family:inherit"></td>
+    <td><input placeholder="Ej: PNC-001" style="width:100%;padding:4px 6px;border:1px solid var(--bdr);border-radius:4px;font-size:11px;font-family:inherit"></td>
+    <td><input type="number" placeholder="Horas" style="width:70px;padding:4px 6px;border:1px solid var(--bdr);border-radius:4px;font-size:11px;font-family:inherit"></td>
+    <td><input type="number" placeholder="H.Inicio" style="width:80px;padding:4px 6px;border:1px solid var(--bdr);border-radius:4px;font-size:11px;font-family:inherit"></td>
+    <td><input type="number" placeholder="H.Fin" style="width:80px;padding:4px 6px;border:1px solid var(--bdr);border-radius:4px;font-size:11px;font-family:inherit"></td>
+    <td><input type="number" placeholder="Galones" style="width:70px;padding:4px 6px;border:1px solid var(--bdr);border-radius:4px;font-size:11px;font-family:inherit"></td>
+    <td><button onclick="quitarMaqReq(${id})" style="background:var(--red);color:#fff;border:none;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function quitarMaqReq(id){
+  const tr=document.getElementById('mr-'+id);
+  if(tr) tr.remove();
+  maqReqRows=maqReqRows.filter(x=>x!==id);
+  if(maqReqRows.length===0){
+    const empty=document.getElementById('maq-req-empty');
+    if(empty) empty.style.display='';
+  }
+  // renumber
+  document.querySelectorAll('#maq-req-body tr:not(#maq-req-empty) td:first-child').forEach((td,i)=>td.textContent=i+1);
+}
+function convNuevo(){
+  document.getElementById('conv-lista').style.display='none';
+  document.getElementById('conv-form').style.display='block';
+  document.getElementById('conv-sub').textContent='Nuevo Convenio';
+  document.getElementById('conv-form-tit').textContent='Registro de Convenios';
+  document.getElementById('conv-tb').innerHTML=`<button class="btn bo" onclick="convGuardar()">Guardar</button><button class="btn bw" onclick="convRegresar()">Cerrar</button>`;
+}
+function convEditar(id){
+  convNuevo();
+  document.getElementById('conv-sub').textContent='Editar Convenio';
+  document.getElementById('conv-form-tit').textContent='Editar Convenio';
+}
+function convRegresar(){
+  document.getElementById('conv-lista').style.display='block';
+  document.getElementById('conv-form').style.display='none';
+  document.getElementById('conv-sub').textContent='Registro de Convenios';
+  document.getElementById('conv-tb').innerHTML=`<button class="btn bg2" onclick="convNuevo()">+ Nuevo Convenio</button><button class="btn bw" onclick="alert('Exportando...')">⬇ Excel</button>`;
+}
+function convGuardar(){alert('✅ Convenio guardado correctamente.');convRegresar();}
+
+// ═══ CAS ═══
+function casNuevo(){
+  document.getElementById('cas-lista').style.display='none';
+  document.getElementById('cas-form').style.display='block';
+  document.getElementById('cas-sub').textContent='Nuevo Contrato CAS';
+  document.getElementById('cas-tb').innerHTML=`<button class="btn bo" onclick="alert('Grabando...')">💾 Grabar</button><button class="btn br" onclick="casRegresar()">↩ Regresar</button>`;
+}
+function casRegresar(){
+  document.getElementById('cas-lista').style.display='block';
+  document.getElementById('cas-form').style.display='none';
+  document.getElementById('cas-sub').textContent='Listado de Contratos CAS';
+  document.getElementById('cas-tb').innerHTML=`<button class="btn bg2" onclick="casNuevo()">+ Agregar</button>`;
+}
+
+// ═══ MODALS ═══
+function abrirOT(){document.getElementById('ov-ot').style.display='flex';}
+function abrirBlg(){document.getElementById('ov-blg').style.display='flex';}
+function abrirOperador(){document.getElementById('ov-oper').style.display='flex';}
+
+// INIT
+go('dash');
+</script>
+</body>
+</html>
